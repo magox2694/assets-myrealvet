@@ -17,3 +17,10 @@ function selectMik() {
   const waUrl = "https://wa.me/" + mikNumber + "?text=Ciao%20Mik%2C%20ho%20bisogno%20di%20aiuto!";
   window.open(waUrl, "_blank");
 }
+// Collego il click del pulsante alla funzione toggle
+document.addEventListener("DOMContentLoaded", function() {
+  const toggleBtn = document.getElementById("myrealvet-chat-toggle");
+  if (toggleBtn) {
+    toggleBtn.addEventListener("click", toggleMyRealVetChat);
+  }
+});
