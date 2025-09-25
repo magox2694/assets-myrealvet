@@ -6,7 +6,7 @@ def list_images_with_links():
 
     # Percorso relativo dal root del repo alla cartella corrente
     # Ad esempio: img/payhip/pg-alimentazione-cane
-    rel_path = os.getcwd().split(repo.split("/")[1])[-1].lstrip("/")
+    rel_path = "img/payhip/pg-alimentazione-cane"
     
     base_url = f"https://cdn.jsdelivr.net/gh/{repo}/{rel_path}/"
 
