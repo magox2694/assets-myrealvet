@@ -1,0 +1,19 @@
+/* STEP 3: Nasconde il form nelle pagine specifiche */
+body[data-path="/b/mIJi4"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/qy9DX"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/jGCpy"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/fKOwk"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/2pZBR"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/tOfVX"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/la-mappa-del-gatto-felice"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/starterpack-viaggiare-con-il-gatto"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/starterpack-cucciolo-felice"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/cheklist-per-viaggiare-con-il-cane"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/7-giorni-per-capire-meglio-il-tuo-cane"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/3GzeO"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/mini-guida-pronto-soccorso-canino"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/corso-alimentazione-cane"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/sostanze-tossiche-per-il-gatto"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"],
+body[data-path="/b/sostanze-tossiche-per-il-cane"] .modal-container[data-form="f74509ce-3744-11f0-a259-71e4e8bc72f9"] {
+  display: none !important;
+}
