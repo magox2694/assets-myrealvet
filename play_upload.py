@@ -1,3 +1,4 @@
+# -------Questo script legge le immagini nuove aggiunte e restituisce i link diretti tramite jsdelivr.net-------
 import subprocess
 import os
 

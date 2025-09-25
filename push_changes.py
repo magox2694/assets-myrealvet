@@ -1,3 +1,4 @@
+#---------Questo script effettua il push delle modifiche locali al repository remoto su GitHub---------
 import os
 import subprocess
 
