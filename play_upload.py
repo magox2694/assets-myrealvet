@@ -1,50 +1,24 @@
 import subprocess
-import tkinter as tk
-from tkinter import simpledialog, messagebox
-
-# Configura i parametri del repo
-GITHUB_USER = "magox2694"
-REPO_NAME = "assets-myrealvet"
-IMG_DIR = "img/payhip/pg-alimentazione-cane/"
-
-def run_git_command(cmd):
-    """Esegue un comando git e ritorna l'output"""
-    result = subprocess.run(cmd, capture_output=True, text=True)
-    if result.stderr:
-        print("⚠️", result.stderr.strip())
-    return result.stdout.strip()
+import os
 
 def main():
-    # Finestra tkinter
-    root = tk.Tk()
-    root.withdraw()
+    repo = "magox2694/assets-myrealvet"
+    branch = "main"
 
-    # Chiede il messaggio di commit
-    msg = simpledialog.askstring("Commit", "Inserisci il messaggio per il commit:")
-    if not msg:
-        msg = "Aggiornate immagini"
+    comment = input("Messaggio di commit: ")
 
-    # Aggiunge solo la cartella immagini
-    run_git_command(["git", "add", IMG_DIR])
+    # Git add & commit
+    subprocess.run(["git", "add", "."])
+    subprocess.run(["git", "commit", "-m", comment])
+    subprocess.run(["git", "push", "origin", branch])
 
-    # Recupera la lista dei file aggiunti/modificati
-    files = run_git_command(["git", "diff", "--cached", "--name-only"]).splitlines()
+    # Trova le immagini aggiunte
+    res = subprocess.run(["git", "diff", "--name-only", "HEAD~1"], capture_output=True, text=True)
+    files = [f for f in res.stdout.splitlines() if f.endswith((".png",".jpg",".jpeg",".gif"))]
 
-    if not files:
-        messagebox.showinfo("Info", "⚠️ Nessuna nuova immagine trovata da caricare.")
-        return
-
-    # Commit + push
-    run_git_command(["git", "commit", "-m", msg])
-    run_git_command(["git", "push", "origin", "main"])
-
-    # Costruisce i link jsDelivr
-    links = []
-    for file in files:
-        links.append(f"https://cdn.jsdelivr.net/gh/{GITHUB_USER}/{REPO_NAME}/{file}")
-
-    # Mostra popup con i link
-    messagebox.showinfo("Upload completato ✅", "\n".join(links))
+    print("\n✅ Push completato. Ecco i link diretti:\n")
+    for f in files:
+        print(f"https://cdn.jsdelivr.net/gh/{repo}/{f}")
 
 if __name__ == "__main__":
     main()
