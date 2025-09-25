@@ -19,6 +19,8 @@ def main():
     print("\n✅ Push completato. Ecco i link diretti:\n")
     for f in files:
         print(f"https://cdn.jsdelivr.net/gh/{repo}/{f}")
+        print(" ")
+        print(" ")
 
 if __name__ == "__main__":
     main()
