@@ -23,10 +23,6 @@ document.addEventListener("DOMContentLoaded", function () {
           </form>
           <p id="mrv-message" style="margin-top:10px;font-size:0.9em;"></p>
         </div>
-
-        <div class="mrv-popup-img">
-          <img src="https://placekitten.com/250/250" alt="eBook gratuiti">
-        </div>
       </div>
     </div>
   </div>
