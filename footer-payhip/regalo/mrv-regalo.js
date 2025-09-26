@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(){
           <p>Proteggi il tuo cane e il tuo gatto scoprendo subito le sostanze tossiche più comuni.</p>
           <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
 
-          <form action="https://angelica-spaccini.myrealvet.i/sostanze-tossiche-per-il-cane-e-gatto" method="get">
+          <form action="https://angelica-spaccini.myrealvet.it/sostanze-tossiche-per-il-cane-e-gatto" method="get">
             <input type="text" placeholder="Il tuo nome" required>
             <input type="email" placeholder="La tua email" required>
             <label>
@@ -33,9 +33,12 @@ document.addEventListener("DOMContentLoaded", function(){
   // Apri popup dopo 5 secondi
   setTimeout(() => { document.getElementById("mrv-popup").classList.add("active"); }, 5000);
 
-  // Chiudi popup
+  // Chiudi popup cliccando su X o sullo sfondo
   document.addEventListener("click", (e) => {
-    if (e.target.classList.contains("mrv-close")) {
+    if (
+      e.target.classList.contains("mrv-close") ||
+      e.target.id === "mrv-popup"
+    ) {
       document.getElementById("mrv-popup").classList.remove("active");
     }
   });
