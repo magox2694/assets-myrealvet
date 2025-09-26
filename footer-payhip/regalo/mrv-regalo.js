@@ -23,7 +23,7 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
 
         <div class="mrv-popup-img">
-          <img src="https://via.placeholder.com/250" alt="eBook gratuiti">
+          <img src="https://cdn.jsdelivr.net/gh/magox2694/assets-myrealvet/img/payhip/pg-alimentazione-cane/test-img.png" alt="eBook gratuiti">
         </div>
       </div>
     </div>
@@ -53,13 +53,13 @@ document.addEventListener("DOMContentLoaded", function(){
     msgBox.style.color = "#555";
 
     try {
-      const res = await fetch("https://emailoctopus.com/api/1.6/lists/TUA_LIST_ID/contacts", {
+      const res = await fetch("https://emailoctopus.com/api/1.6/lists/ea5e537e-36f8-11f0-bee9-ef72d018156b/contacts", {
         method: "POST",
         headers: {
           "Content-Type": "application/json"
         },
         body: JSON.stringify({
-          api_key: "TUA_API_KEY",
+          api_key: "eo_9d9435f8a573739cee7f245310eea71d4ff4f404abd52d83e78c6d9b66131823",
           email_address: email,
           fields: { FirstName: name },
           tags: ["sostanze tossiche"]
