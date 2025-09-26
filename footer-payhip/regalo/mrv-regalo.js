@@ -1,10 +1,8 @@
+// MRV PopUp Regalo
+document.addEventListener("DOMContentLoaded", function () {
+  console.log("✅ MRV Regalo JS caricato e DOM pronto");
 
-console.log("✅ MRV Regalo JS caricato");
-document.addEventListener("DOMContentLoaded", () => {
-  console.log("✅ DOM pronto, script attivo");
-});
-
-document.addEventListener("DOMContentLoaded", function(){
+  // Inietto HTML del popup
   const popupHTML = `
   <div id="mrv-popup" class="mrv-popup">
     <div class="mrv-popup-content">
@@ -17,19 +15,18 @@ document.addEventListener("DOMContentLoaded", function(){
           <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
 
           <form id="mrv-form">
-            <input type="text" name="firstName" placeholder="Il tuo nome" required>
+            <input type="text" name="name" placeholder="Il tuo nome" required>
             <input type="email" name="email" placeholder="La tua email" required>
             <label>
               <input type="checkbox" required> Acconsento a ricevere email con offerte e sconti
             </label>
             <button type="submit">📘 Scarica subito GRATIS</button>
           </form>
-
-          <div id="mrv-message" style="margin-top:1em; font-size:1rem;"></div>
+          <div id="mrv-message" style="margin-top:10px;font-weight:600;"></div>
         </div>
 
         <div class="mrv-popup-img">
-          <img src="https://cdn.jsdelivr.net/gh/magox2694/assets-myrealvet/img/payhip/pg-alimentazione-cane/test-img.png" alt="eBook gratuiti">
+          <img src="https://placekitten.com/250/250" alt="eBook gratuiti">
         </div>
       </div>
     </div>
@@ -37,55 +34,57 @@ document.addEventListener("DOMContentLoaded", function(){
   `;
   document.body.insertAdjacentHTML("beforeend", popupHTML);
 
-  // Apri popup dopo 5 secondi
-  setTimeout(() => { document.getElementById("mrv-popup").classList.add("active"); }, 5000);
+  // Mostra popup dopo 5 secondi
+  setTimeout(() => {
+    document.getElementById("mrv-popup").classList.add("active");
+  }, 5000);
 
-  // Chiudi popup
+  // Chiudi popup al click sulla X
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("mrv-close")) {
       document.getElementById("mrv-popup").classList.remove("active");
     }
   });
 
-  // ---- INVIO DATI API EmailOctopus ----
-  document.getElementById("mrv-form").addEventListener("submit", async function(e){
-    e.preventDefault(); 
+  // ---- 🎯 GESTIONE FORM ----
+  const form = document.getElementById("mrv-form");
+  const messageBox = document.getElementById("mrv-message");
 
-    const name = this.firstName.value;
-    const email = this.email.value;
-    const msgBox = document.getElementById("mrv-message");
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault(); // blocco SUBITO il redirect
+    console.log("🚀 Invio intercettato, niente redirect");
 
-    msgBox.textContent = "⏳ Invio in corso...";
-    msgBox.style.color = "#555";
+    const nome = form.querySelector('input[name="name"]').value;
+    const email = form.querySelector('input[name="email"]').value;
+    console.log("📧 Nome:", nome, "Email:", email);
 
+    // Chiamata API EmailOctopus
     try {
-      const res = await fetch("https://emailoctopus.com/api/1.6/lists/ea5e537e-36f8-11f0-bee9-ef72d018156b/contacts", {
+      const res = await fetch("https://emailoctopus.com/api/1.6/lists/TUA_LIST_ID/contacts", {
         method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          api_key: "eo_9d9435f8a573739cee7f245310eea71d4ff4f404abd52d83e78c6d9b66131823",
+          api_key: "LA_TUA_API_KEY",
           email_address: email,
-          fields: { FirstName: name },
+          fields: { FirstName: nome },
           tags: ["sostanze tossiche"]
-        })
+        }),
       });
 
       const data = await res.json();
-      console.log("Risposta API:", data); // 🔎 LOG per debug
+      console.log("📩 Risposta EO:", data);
 
       if (res.ok) {
-        msgBox.textContent = "✅ Iscrizione completata! Controlla la tua email 🎉";
-        msgBox.style.color = "green";
+        messageBox.innerHTML = "✅ Iscrizione avvenuta con successo!";
+        messageBox.style.color = "green";
       } else {
-        msgBox.textContent = `⚠️ Errore: ${data.error?.message || "Impossibile completare l'iscrizione"}`;
-        msgBox.style.color = "red";
+        messageBox.innerHTML = "⚠️ Errore: " + (data.error?.message || "riprovare");
+        messageBox.style.color = "red";
       }
-    } catch(err) {
-      console.error("Errore di rete:", err);
-      msgBox.textContent = "❌ Errore di connessione. Riprova.";
-      msgBox.style.color = "red";
+    } catch (err) {
+      console.error("❌ Errore API:", err);
+      messageBox.innerHTML = "❌ Problema di connessione, riprova.";
+      messageBox.style.color = "red";
     }
   });
 });
