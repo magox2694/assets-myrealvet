@@ -22,7 +22,8 @@ document.addEventListener("DOMContentLoaded", function(){
         </div>
 
         <div class="mrv-popup-img">
-          <img src="https://cdn.jsdelivr.net/gh/magox2694/assets-myrealvet/img/payhip/pg-alimentazione-cane/recap.png" alt="eBook gratuiti">
+          <img src="https://via.placeholder.com/250x300.png?text=EBOOK+TEST
+" alt="eBook gratuiti">
         </div>
       </div>
     </div>
