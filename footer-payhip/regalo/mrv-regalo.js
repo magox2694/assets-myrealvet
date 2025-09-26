@@ -18,6 +18,8 @@ document.addEventListener("DOMContentLoaded", function(){
             </label>
             <button type="submit">📘 Scarica subito GRATIS</button>
           </form>
+
+          <div id="mrv-message" style="margin-top:1em; font-size:1rem;"></div>
         </div>
 
         <div class="mrv-popup-img">
@@ -41,10 +43,14 @@ document.addEventListener("DOMContentLoaded", function(){
 
   // ---- INVIO DATI API EmailOctopus ----
   document.getElementById("mrv-form").addEventListener("submit", async function(e){
-    e.preventDefault(); // 🔴 blocca il redirect
+    e.preventDefault(); 
 
     const name = this.firstName.value;
     const email = this.email.value;
+    const msgBox = document.getElementById("mrv-message");
+
+    msgBox.textContent = "⏳ Invio in corso...";
+    msgBox.style.color = "#555";
 
     try {
       const res = await fetch("https://emailoctopus.com/api/1.6/lists/TUA_LIST_ID/contacts", {
@@ -60,14 +66,20 @@ document.addEventListener("DOMContentLoaded", function(){
         })
       });
 
+      const data = await res.json();
+      console.log("Risposta API:", data); // 🔎 LOG per debug
+
       if (res.ok) {
-        window.location.href = "https://angelica-spaccini.myrealvet.it/sostanze-tossiche-per-il-cane-e-gatto";
+        msgBox.textContent = "✅ Iscrizione completata! Controlla la tua email 🎉";
+        msgBox.style.color = "green";
       } else {
-        alert("Errore nell'iscrizione, riprova.");
+        msgBox.textContent = `⚠️ Errore: ${data.error?.message || "Impossibile completare l'iscrizione"}`;
+        msgBox.style.color = "red";
       }
     } catch(err) {
-      console.error(err);
-      alert("Errore di connessione.");
+      console.error("Errore di rete:", err);
+      msgBox.textContent = "❌ Errore di connessione. Riprova.";
+      msgBox.style.color = "red";
     }
   });
 });
