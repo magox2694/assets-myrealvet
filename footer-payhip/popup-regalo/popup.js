@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", function(){
           <p>Proteggi il tuo cane e il tuo gatto scoprendo subito le sostanze tossiche più comuni.</p>
           <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
 
-          <form action="https://angelica-spaccini.myrealvet.it/landing-ebook" method="get">
+          <form action="https://angelica-spaccini.myrealvet.it" method="get">
             <input type="text" placeholder="Il tuo nome" required>
             <input type="email" placeholder="La tua email" required>
             <label>
