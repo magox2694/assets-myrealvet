@@ -1,3 +1,9 @@
+
+console.log("✅ MRV Regalo JS caricato");
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("✅ DOM pronto, script attivo");
+});
+
 document.addEventListener("DOMContentLoaded", function(){
   const popupHTML = `
   <div id="mrv-popup" class="mrv-popup">
