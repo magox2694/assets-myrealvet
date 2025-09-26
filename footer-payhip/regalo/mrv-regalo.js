@@ -1,5 +1,4 @@
-// Inietta HTML popup nel body e gestisce iscrizione EmailOctopus
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", function(){
   const popupHTML = `
   <div id="mrv-popup" class="mrv-popup">
     <div class="mrv-popup-content">
@@ -12,8 +11,8 @@ document.addEventListener("DOMContentLoaded", function () {
           <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
 
           <form id="mrv-form">
-            <input type="text" id="mrv-name" placeholder="Il tuo nome" required>
-            <input type="email" id="mrv-email" placeholder="La tua email" required>
+            <input type="text" name="firstName" placeholder="Il tuo nome" required>
+            <input type="email" name="email" placeholder="La tua email" required>
             <label>
               <input type="checkbox" required> Acconsento a ricevere email con offerte e sconti
             </label>
@@ -22,7 +21,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
 
         <div class="mrv-popup-img">
-          <img src="https://via.placeholder.com/250x350.png?text=Ebook+Gratis" alt="eBook gratuiti">
+          <img src="https://via.placeholder.com/250" alt="eBook gratuiti">
         </div>
       </div>
     </div>
@@ -31,9 +30,7 @@ document.addEventListener("DOMContentLoaded", function () {
   document.body.insertAdjacentHTML("beforeend", popupHTML);
 
   // Apri popup dopo 5 secondi
-  setTimeout(() => {
-    document.getElementById("mrv-popup").classList.add("active");
-  }, 5000);
+  setTimeout(() => { document.getElementById("mrv-popup").classList.add("active"); }, 5000);
 
   // Chiudi popup
   document.addEventListener("click", (e) => {
@@ -42,38 +39,35 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Invio dati a EmailOctopus
-  document.getElementById("mrv-form").addEventListener("submit", async function (e) {
-    e.preventDefault();
+  // ---- INVIO DATI API EmailOctopus ----
+  document.getElementById("mrv-form").addEventListener("submit", async function(e){
+    e.preventDefault(); // 🔴 blocca il redirect
 
-    const name = document.getElementById("mrv-name").value.trim();
-    const email = document.getElementById("mrv-email").value.trim();
-
-    const API_KEY = "eo_9d9435f8a573739cee7f245310eea71d4ff4f404abd52d83e78c6d9b66131823";
-    const LIST_ID = "ea5e537e-36f8-11f0-bee9-ef72d018156b";
+    const name = this.firstName.value;
+    const email = this.email.value;
 
     try {
-      const response = await fetch(`https://emailoctopus.com/api/1.6/lists/${LIST_ID}/contacts`, {
+      const res = await fetch("https://emailoctopus.com/api/1.6/lists/TUA_LIST_ID/contacts", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json"
+        },
         body: JSON.stringify({
-          api_key: API_KEY,
+          api_key: "TUA_API_KEY",
           email_address: email,
           fields: { FirstName: name },
-          tags: ["tag sostanze tossiche"], // 👈 il tag richiesto
-          status: "SUBSCRIBED"
+          tags: ["sostanze tossiche"]
         })
       });
 
-      if (response.ok) {
-        alert("🎉 Iscrizione completata! Controlla la tua email per scaricare i tuoi eBook.");
-        document.getElementById("mrv-form").reset();
+      if (res.ok) {
+        window.location.href = "https://angelica-spaccini.myrealvet.it/sostanze-tossiche-per-il-cane-e-gatto";
       } else {
-        const error = await response.json();
-        alert("Errore: " + (error.error?.message || "Impossibile completare l’iscrizione."));
+        alert("Errore nell'iscrizione, riprova.");
       }
-    } catch (err) {
-      alert("Errore di connessione: " + err.message);
+    } catch(err) {
+      console.error(err);
+      alert("Errore di connessione.");
     }
   });
 });
