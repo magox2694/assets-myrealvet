@@ -1,5 +1,5 @@
-// Inietta HTML popup nel body
-document.addEventListener("DOMContentLoaded", function(){
+// Inietta HTML popup nel body e gestisce iscrizione EmailOctopus
+document.addEventListener("DOMContentLoaded", function () {
   const popupHTML = `
   <div id="mrv-popup" class="mrv-popup">
     <div class="mrv-popup-content">
@@ -11,20 +11,18 @@ document.addEventListener("DOMContentLoaded", function(){
           <p>Proteggi il tuo cane e il tuo gatto scoprendo subito le sostanze tossiche più comuni.</p>
           <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
 
-          <!-- Form personalizzato collegato a EmailOctopus -->
           <form id="mrv-form">
-            <input type="text" id="mrv-name" name="field_0" placeholder="Il tuo nome" required>
-            <input type="email" id="mrv-email" name="field_1" placeholder="La tua email" required>
+            <input type="text" id="mrv-name" placeholder="Il tuo nome" required>
+            <input type="email" id="mrv-email" placeholder="La tua email" required>
             <label>
-              <input type="checkbox" id="mrv-consent" required> Acconsento a ricevere email con offerte e sconti
+              <input type="checkbox" required> Acconsento a ricevere email con offerte e sconti
             </label>
             <button type="submit">📘 Scarica subito GRATIS</button>
           </form>
-          <!-- Fine Form -->
         </div>
 
         <div class="mrv-popup-img">
-          <img src="https://cdn.jsdelivr.net/gh/magox2694/assets-myrealvet/img/payhip/pg-alimentazione-cane/recap.png" alt="eBook gratuiti">
+          <img src="https://via.placeholder.com/250x350.png?text=Ebook+Gratis" alt="eBook gratuiti">
         </div>
       </div>
     </div>
@@ -33,7 +31,9 @@ document.addEventListener("DOMContentLoaded", function(){
   document.body.insertAdjacentHTML("beforeend", popupHTML);
 
   // Apri popup dopo 5 secondi
-  setTimeout(() => { document.getElementById("mrv-popup").classList.add("active"); }, 5000);
+  setTimeout(() => {
+    document.getElementById("mrv-popup").classList.add("active");
+  }, 5000);
 
   // Chiudi popup
   document.addEventListener("click", (e) => {
@@ -42,29 +42,38 @@ document.addEventListener("DOMContentLoaded", function(){
     }
   });
 
-  // Invio dati a EmailOctopus + redirect al regalo
-  document.addEventListener("submit", function(e){
-    if(e.target && e.target.id === "mrv-form"){
-      e.preventDefault();
+  // Invio dati a EmailOctopus
+  document.getElementById("mrv-form").addEventListener("submit", async function (e) {
+    e.preventDefault();
 
-      const name = document.getElementById("mrv-name").value;
-      const email = document.getElementById("mrv-email").value;
+    const name = document.getElementById("mrv-name").value.trim();
+    const email = document.getElementById("mrv-email").value.trim();
 
-      fetch("https://eocampaign1.com/form/ca568b10-4c78-11f0-a826-4362ab4bc29a", {
+    const API_KEY = "eo_9d9435f8a573739cee7f245310eea71d4ff4f404abd52d83e78c6d9b66131823";
+    const LIST_ID = "ea5e537e-36f8-11f0-bee9-ef72d018156b";
+
+    try {
+      const response = await fetch(`https://emailoctopus.com/api/1.6/lists/${LIST_ID}/contacts`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          field_0: name,
-          field_1: email
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          api_key: API_KEY,
+          email_address: email,
+          fields: { FirstName: name },
+          tags: ["tag sostanze tossiche"], // 👈 il tag richiesto
+          status: "SUBSCRIBED"
         })
-      })
-      .then(() => {
-        // Redirect al regalo
-        window.location.href = "https://angelica-spaccini.myrealvet.it/sostanze-tossiche-per-il-cane-e-gatto";
-      })
-      .catch(() => {
-        alert("❌ Errore di connessione. Riprova.");
       });
+
+      if (response.ok) {
+        alert("🎉 Iscrizione completata! Controlla la tua email per scaricare i tuoi eBook.");
+        document.getElementById("mrv-form").reset();
+      } else {
+        const error = await response.json();
+        alert("Errore: " + (error.error?.message || "Impossibile completare l’iscrizione."));
+      }
+    } catch (err) {
+      alert("Errore di connessione: " + err.message);
     }
   });
 });
