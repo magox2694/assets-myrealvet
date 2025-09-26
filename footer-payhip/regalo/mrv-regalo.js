@@ -41,12 +41,16 @@ document.addEventListener("DOMContentLoaded", function () {
     popup.classList.add("active");
   }, 3000);
 
-  // Chiudi popup
+  // Chiudi popup se cliccano fuori dal contenuto
   document.addEventListener("click", (e) => {
     if (e.target.classList.contains("mrv-close")) {
       popup.classList.remove("active");
     }
-  });
+    if (e.target.id === "mrv-popup") {
+      popup.classList.remove("active");
+    }
+ });
+
 
   // Funzione helper: messaggi di errore più carini
   function formatError(err) {
