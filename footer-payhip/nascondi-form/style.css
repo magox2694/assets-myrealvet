@@ -1,4 +1,4 @@
-/* STEP 3: Nasconde il form EmailOctopus nelle pagine specifiche */
+/* STEP 3: Nasconde SOLO il form EmailOctopus in alcune pagine */
 body[data-path="/b/mIJi4"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
 body[data-path="/b/qy9DX"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
 body[data-path="/b/jGCpy"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
