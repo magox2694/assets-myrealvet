@@ -8,7 +8,7 @@ document.addEventListener("DOMContentLoaded", function () {
       <button class="mrv-close">&times;</button>
       
       <div class="mrv-popup-grid">
-        <div class="mrv-popup-text">
+        <div class="mrv-popup-text" id="mrv-popup-body">
           <h2>🎁 2 eBook GRATIS</h2>
           <p>Proteggi il tuo cane e il tuo gatto scoprendo subito le sostanze tossiche più comuni.</p>
           <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
 
         <div class="mrv-popup-img">
-          <img src="https://cdn.jsdelivr.net/gh/magox2694/assets-myrealvet/img/payhip/pg-alimentazione-cane/Mockup-corso-alimentazione.png" alt="eBook gratuiti">
+          <img src="https://placekitten.com/250/250" alt="eBook gratuiti">
         </div>
       </div>
     </div>
@@ -38,6 +38,7 @@ document.addEventListener("DOMContentLoaded", function () {
   const popup = document.getElementById("mrv-popup");
   const form = document.getElementById("mrv-form");
   const message = document.getElementById("mrv-message");
+  const popupBody = document.getElementById("mrv-popup-body");
 
   // Mostra popup dopo 3 secondi
   setTimeout(() => {
@@ -51,9 +52,21 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
+  // Funzione helper: messaggi di errore più carini
+  function formatError(err) {
+    if (err.includes("MEMBER_EXISTS_WITH_EMAIL_ADDRESS")) {
+      return "⚠️ Sei già iscritto con questa email! Controlla la tua posta (anche in Spam/Promozioni).";
+    }
+    if (err.includes("API_KEY_INVALID")) {
+      return "❌ Errore tecnico, contatta l’amministratore.";
+    }
+    return "❌ Si è verificato un errore. Riprova più tardi.";
+  }
+
   // Submit form
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
+    message.style.color = "#555";
     message.textContent = "⏳ Invio in corso...";
 
     const name = document.getElementById("mrv-name").value;
@@ -61,6 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const consent = document.getElementById("mrv-consent").checked;
 
     if (!consent) {
+      message.style.color = "red";
       message.textContent = "⚠ Devi accettare per continuare.";
       return;
     }
@@ -74,11 +88,20 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const result = await response.json();
       if (result.success) {
-        message.style.color = "green";
-        message.textContent = "🎉 Iscrizione completata! Controlla la tua email.";
+        // Messaggio di successo con stile MRV
+        popupBody.innerHTML = `
+          <h2 style="color:#1697c7; font-family:Quicksand, sans-serif;">🎉 Congratulazioni!</h2>
+          <p style="font-size:1.1em; color:#0b1220;">
+            Il tuo regalo è stato inviato alla tua email. <br>
+            Controlla anche la cartella <strong>Promozioni</strong> o <strong>Spam</strong>.
+          </p>
+          <p style="margin-top:1em; font-size:0.9em; color:#28a745;">
+            Grazie per aver scelto <strong>MyRealVet</strong> 🐾
+          </p>
+        `;
       } else {
         message.style.color = "red";
-        message.textContent = "❌ Errore: " + (result.message || "riprovare");
+        message.textContent = formatError(result.message || "");
       }
     } catch (err) {
       console.error("Errore API:", err);
