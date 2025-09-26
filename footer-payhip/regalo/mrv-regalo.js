@@ -25,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
         </div>
 
         <div class="mrv-popup-img">
-          <img src="https://placekitten.com/250/250" alt="eBook gratuiti">
+          <img src="https://cdn.jsdelivr.net/gh/magox2694/assets-myrealvet/img/payhip/pg-alimentazione-cane/Mockup-corso-alimentazione.png" alt="eBook gratuiti">
         </div>
       </div>
     </div>
