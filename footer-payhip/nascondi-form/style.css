@@ -12,7 +12,8 @@ body[data-path="/cheklist-per-viaggiare-con-il-cane"] .modal-container[data-form
 body[data-path="/7-giorni-per-capire-meglio-il-tuo-cane"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
 body[data-path="/b/3GzeO"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
 body[data-path="/mini-guida-pronto-soccorso-canino"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
-body[data-path="/b/leAUs"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"], /* alimentazione*/
+body[data-path="/b/leAUs"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
+body[data-path="/b/corso-alimentazione-cane"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"], /* alimentazione*/
 body[data-path="/b/sostanze-tossiche-per-il-gatto"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"],
 body[data-path="/b/sostanze-tossiche-per-il-cane"] .modal-container[data-form="ca568b10-4c78-11f0-a826-4362ab4bc29a"] {
   display: none !important;
