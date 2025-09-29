@@ -39,7 +39,7 @@ document.addEventListener("DOMContentLoaded", function () {
   // Mostra popup dopo 3 secondi
   setTimeout(() => {
     popup.classList.add("active");
-  }, 3000);
+  }, 6000);
 
   // Chiudi popup se cliccano fuori dal contenuto
   document.addEventListener("click", (e) => {
