@@ -15,7 +15,7 @@ def main():
 
     # Trova le immagini aggiunte
     res = subprocess.run(["git", "diff", "--name-only", "HEAD~1"], capture_output=True, text=True)
-    files = [f for f in res.stdout.splitlines() if f.endswith((".png",".jpg",".jpeg",".gif"))]
+    files = [f for f in res.stdout.splitlines() if f.endswith((".png",".jpg",".jpeg",".gif",".svg",".webp",".bmp",".ico"))]
 
     print("\n✅ Push completato. Ecco i link diretti:\n")
     for f in files:
