@@ -71,3 +71,9 @@
   stroke: currentColor; /* eredita il colore dal bottone */
 }
 
+.mrv-close svg line {
+  stroke: #333 !important;   /* colore visibile */
+}
+.mrv-close:hover svg line {
+  stroke: #1697c7 !important; /* colore brand al passaggio */
+}
