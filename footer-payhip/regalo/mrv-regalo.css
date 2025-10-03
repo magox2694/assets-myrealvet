@@ -45,6 +45,7 @@
   .mrv-popup-img img { max-width: 180px; }
 }
 
+/* --------- CLOSE BUTTON --------- */
 .mrv-close {
   position: absolute; 
   top: 12px; 
@@ -57,23 +58,24 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  color: #333 !important; /* colore base */
   z-index: 10000;
-  transition: color .2s ease, transform .2s ease;
+  transition: transform .2s ease;
 }
-.mrv-close:hover {
-  color: #1697c7; /* colore brand al passaggio */
-  transform: scale(1.1);
-}
+
 .mrv-close svg {
   width: 24px;
   height: 24px;
-  stroke: currentColor; /* eredita il colore dal bottone */
 }
 
 .mrv-close svg line {
-  stroke: #333 !important;   /* colore visibile */
+  stroke: #333 !important;   /* X sempre grigia */
+  stroke-width: 2.5;
+  stroke-linecap: round;
 }
+
 .mrv-close:hover svg line {
-  stroke: #1697c7 !important; /* colore brand al passaggio */
+  stroke: #1697c7 !important; /* X celeste al passaggio */
+}
+.mrv-close:hover {
+  transform: scale(1.1);
 }
