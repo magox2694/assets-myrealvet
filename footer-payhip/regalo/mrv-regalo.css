@@ -17,10 +17,7 @@
   box-shadow: 0 12px 32px rgba(0,0,0,.2);
   position: relative;
 }
-.mrv-close {
-  position: absolute; top: 12px; right: 12px;
-  background: none; border: none; font-size: 1.5rem; cursor: pointer;
-}
+
 .mrv-popup-grid {
   display: flex; flex-wrap: wrap; gap: 2em; align-items: center;
 }
@@ -54,13 +51,23 @@
   right: 12px;
   background: none; 
   border: none; 
-  font-size: 1.8rem; 
   cursor: pointer;
-  color: #333; /* 👈 colore della X */
-  font-weight: bold;
-  line-height: 1;
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #333 !important; /* colore base */
   z-index: 10000;
+  transition: color .2s ease, transform .2s ease;
 }
 .mrv-close:hover {
   color: #1697c7; /* colore brand al passaggio */
+  transform: scale(1.1);
 }
+.mrv-close svg {
+  width: 24px;
+  height: 24px;
+  stroke: currentColor; /* eredita il colore dal bottone */
+}
+
