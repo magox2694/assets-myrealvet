@@ -1,41 +1,41 @@
+// @ts-nocheck
 // MRV Regalo Popup
+
 document.addEventListener("DOMContentLoaded", function () {
   console.log("✅ MRV Regalo JS caricato e DOM pronto");
 
   const popupHTML = `
-  <div id="mrv-popup" class="mrv-popup">
-    <div class="mrv-popup-content">
-      <button class="mrv-close" aria-label="Chiudi popup">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-            viewBox="0 0 24 24" fill="none" 
-            stroke="#333" stroke-width="2.5" 
-            stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18"/>
-          <line x1="6" y1="6" x2="18" y2="18"/>
-        </svg>
-      </button>
+    <div id="mrv-popup" class="mrv-popup">
+      <div class="mrv-popup-content">
+        <button class="mrv-close" aria-label="Chiudi popup">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
+              viewBox="0 0 24 24" fill="none" 
+              stroke="#333" stroke-width="2.5" 
+              stroke-linecap="round" stroke-linejoin="round">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
 
+        <div class="mrv-popup-grid">
+          <div class="mrv-popup-text" id="mrv-popup-body">
+            <h2>🎁 2 eBook GRATIS</h2>
+            <p>Proteggi il tuo cane e il tuo gatto scoprendo subito le sostanze tossiche più comuni.</p>
+            <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
 
-      
-      <div class="mrv-popup-grid">
-        <div class="mrv-popup-text" id="mrv-popup-body">
-          <h2>🎁 2 eBook GRATIS</h2>
-          <p>Proteggi il tuo cane e il tuo gatto scoprendo subito le sostanze tossiche più comuni.</p>
-          <p class="trust">✔ Già oltre <strong>2.000 download</strong></p>
-
-          <form id="mrv-form">
-            <input type="text" id="mrv-name" placeholder="Il tuo nome" required>
-            <input type="email" id="mrv-email" placeholder="La tua email" required>
-            <label>
-              <input type="checkbox" id="mrv-consent" required> Acconsento a ricevere email con offerte e sconti
-            </label>
-            <button type="submit">📘 Scarica subito GRATIS</button>
-          </form>
-          <p id="mrv-message" style="margin-top:10px;font-size:0.9em;"></p>
+            <form id="mrv-form">
+              <input type="text" id="mrv-name" placeholder="Il tuo nome" required />
+              <input type="email" id="mrv-email" placeholder="La tua email" required />
+              <label>
+                <input type="checkbox" id="mrv-consent" required /> Acconsento a ricevere email con offerte e sconti
+              </label>
+              <button type="submit">📘 Scarica subito GRATIS</button>
+            </form>
+            <p id="mrv-message" style="margin-top:10px;font-size:0.9em;"></p>
+          </div>
         </div>
       </div>
     </div>
-  </div>
   `;
 
   // Inietta il popup nel body
@@ -45,22 +45,26 @@ document.addEventListener("DOMContentLoaded", function () {
   const form = document.getElementById("mrv-form");
   const message = document.getElementById("mrv-message");
   const popupBody = document.getElementById("mrv-popup-body");
+  const closeBtn = document.querySelector(".mrv-close");
 
-  // Mostra popup dopo 3 secondi
+  // Mostra popup dopo 6 secondi
   setTimeout(() => {
     popup.classList.add("active");
   }, 6000);
 
-  // Chiudi popup se cliccano fuori dal contenuto
-  document.addEventListener("click", (e) => {
-    if (e.target.classList.contains("mrv-close")) {
+  // Chiudi popup cliccando sulla X
+  if (closeBtn) {
+    closeBtn.addEventListener("click", () => {
       popup.classList.remove("active");
-    }
+    });
+  }
+
+  // Chiudi popup cliccando fuori dal contenuto
+  popup.addEventListener("click", (e) => {
     if (e.target.id === "mrv-popup") {
       popup.classList.remove("active");
     }
- });
-
+  });
 
   // Funzione helper: messaggi di errore più carini
   function formatError(err) {
