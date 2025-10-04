@@ -1,6 +1,7 @@
 name: Convert images to WebP
 
 on:
+  workflow_dispatch:   # permette avvio manuale
   push:
     paths:
       - "img/payhip/**.jpg"
@@ -17,7 +18,7 @@ jobs:
       - name: Install WebP tools
         run: sudo apt-get install -y webp
 
-      - name: Convert JPG/PNG to WebP
+      - name: Convert all JPG/PNG to WebP
         run: |
           find img/payhip -type f \( -iname "*.jpg" -o -iname "*.jpeg" -o -iname "*.png" \) | while read img; do
             filename="${img%.*}.webp"
@@ -30,5 +31,5 @@ jobs:
           git config user.name "github-actions"
           git config user.email "actions@github.com"
           git add img/payhip/**/*.webp
-          git commit -m "Auto-converted images to WebP"
+          git commit -m "Auto-converted existing images to WebP"
           git push
