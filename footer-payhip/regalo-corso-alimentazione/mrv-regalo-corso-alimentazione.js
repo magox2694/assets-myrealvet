@@ -79,7 +79,7 @@ document.addEventListener("DOMContentLoaded", function () {
 
         // Avvia download automatico
         setTimeout(() => {
-          window.location.href = "https://raw.githubusercontent.com/magox2694/assets-myrealvet/main/freebies/Guida_5_errori_alimentazione.pdf";
+          window.location.href = "https://raw.githubusercontent.com/magox2694/assets-myrealvet/footer-payhip/regalo-corso-alimentazione/Guida_5_errori_alimentazione.pdf";
         }, 1500);
 
       } else {
