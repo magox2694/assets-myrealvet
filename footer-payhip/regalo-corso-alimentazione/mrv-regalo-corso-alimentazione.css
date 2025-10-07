@@ -53,3 +53,36 @@
 }
 .mrv-close-alimentazione svg line { stroke: #333; }
 .mrv-close-alimentazione:hover svg line { stroke: #1697c7; }
+
+/* === Bottone Sticky Centrale === */
+.mrv-sticky-btn {
+  position: fixed;
+  bottom: 25px;
+  left: 50%;
+  transform: translateX(-50%);
+  background: linear-gradient(135deg, #1697c7, #28a745);
+  color: #fff;
+  border: none;
+  padding: 1em 2em;
+  border-radius: 40px;
+  font-size: 1.1rem;
+  cursor: pointer;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  z-index: 9999;
+  transition: transform 0.2s ease, opacity 0.3s ease;
+}
+.mrv-sticky-btn:hover {
+  transform: translateX(-50%) scale(1.05);
+  background: linear-gradient(135deg, #28a745, #1697c7);
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .mrv-sticky-btn {
+    bottom: 15px;
+    font-size: 1rem;
+    padding: 0.9em 1.4em;
+  }
+}

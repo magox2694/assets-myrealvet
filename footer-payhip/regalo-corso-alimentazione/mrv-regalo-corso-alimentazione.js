@@ -51,6 +51,33 @@ document.addEventListener("DOMContentLoaded", function () {
     if (e.target.id === "mrv-popup-alimentazione") popup.classList.remove("active");
   });
 
+  // === Bottone sticky centrato per riaprire popup ===
+  const stickyBtn = document.createElement("button");
+  stickyBtn.className = "mrv-sticky-btn";
+  stickyBtn.innerHTML = "🎁 Scarica la guida gratuita";
+  document.body.appendChild(stickyBtn);
+
+  // Nascosto di default
+  stickyBtn.style.display = "none";
+
+  // Mostra il bottone dopo la chiusura del popup
+  closeBtn.addEventListener("click", () => {
+    popup.classList.remove("active");
+    stickyBtn.style.display = "block";
+  });
+
+  // Riapre il popup e nasconde il bottone
+  stickyBtn.addEventListener("click", () => {
+    popup.classList.add("active");
+    stickyBtn.style.display = "none";
+  });
+
+  // (Opzionale) appare anche da solo dopo 30 secondi
+  setTimeout(() => {
+    if (!popup.classList.contains("active")) stickyBtn.style.display = "block";
+  }, 30000);
+
+
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     message.style.color = "#555";
