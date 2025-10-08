@@ -1,47 +1,22 @@
-// MRV – Pronto Soccorso: aggiunge automaticamente il campo Nome se manca
-document.addEventListener("DOMContentLoaded", function () {
+// MRV – Pronto Soccorso (versione aggiornata 08/10/2025)
+document.addEventListener("DOMContentLoaded", () => {
   console.log("🐾 MRV Pronto Soccorso – JS attivo");
 
-  const form = document.querySelector('form[action="/subscribe-prontosoccorso"]');
-  if (!form) return;
+  const form = document.getElementById("mrv-form-prontosoccorso");
+  if (!form) {
+    console.warn("❌ Form pronto soccorso non trovato");
+    return;
+  }
 
-  form.classList.add("mrv-form-wrapper");
-
-  // 1) Trova gli elementi esistenti
+  const nameInput = form.querySelector('input[name="name"]');
   const emailInput = form.querySelector('input[name="email"]');
-  const submitBtn  = form.querySelector('button');
+  const submitBtn = form.querySelector("button");
+  const successMessage = form.querySelector(".mrv-success-message");
 
-  // 2) Se il campo NOME non c'è, lo creo e lo inserisco prima dell'email
-  let nameInput = form.querySelector('input[name="name"]');
-  if (!nameInput) {
-    nameInput = document.createElement("input");
-    nameInput.type = "text";
-    nameInput.name = "name";
-    nameInput.placeholder = "Il tuo nome";
-    nameInput.required = true; // se vuoi renderlo facoltativo, metti false
-    nameInput.className = "mrv-input";
-    // Inserisco PRIMA dell'email
-    if (emailInput && emailInput.parentNode) {
-      emailInput.parentNode.insertBefore(nameInput, emailInput);
-    } else {
-      form.prepend(nameInput);
-    }
-  }
-
-  // 3) Messaggio di successo (dentro la card)
-  let successMessage = form.querySelector(".mrv-success-message");
-  if (!successMessage) {
-    successMessage = document.createElement("div");
-    successMessage.className = "mrv-success-message";
-    successMessage.textContent = "✅ Guida inviata! Controlla la tua email.";
-    form.appendChild(successMessage);
-  }
-
-  // 4) Gestione submit AJAX
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
 
-    const name  = nameInput.value.trim();
+    const name = nameInput.value.trim();
     const email = emailInput.value.trim();
 
     if (!email) {
@@ -49,49 +24,46 @@ document.addEventListener("DOMContentLoaded", function () {
       emailInput.focus();
       return;
     }
-    if (nameInput.required && !name) {
+    if (!name) {
       alert("Inserisci il tuo nome!");
       nameInput.focus();
       return;
     }
 
-    // Feedback bottone (non cambiamo stile Payhip)
-    if (submitBtn) {
-      submitBtn.disabled = true;
-      const originalText = submitBtn.textContent;
-      submitBtn.dataset._original = originalText || "";
-      submitBtn.textContent = "Invio...";
-    }
+    // Feedback visivo
+    const originalText = submitBtn.textContent;
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Invio...";
 
     try {
       const res = await fetch("https://diet.myrealvet.it/subscribe-prontosoccorso", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email })
+        body: JSON.stringify({ name, email }),
       });
 
       const data = await res.json();
+      console.log("📬 Risposta server:", data);
 
       if (data.success) {
         successMessage.style.display = "block";
+        successMessage.textContent = "✅ Guida inviata! Controlla la tua email.";
+        nameInput.value = "";
         emailInput.value = "";
-        if (nameInput) nameInput.value = "";
 
-        // Se vuoi far partire un download automatico, scommenta:
+        // opzionale: redirect o download automatico
         // setTimeout(() => {
-        //   window.location.href = "https://raw.githubusercontent.com/....pdf";
+        //   window.open("https://raw.githubusercontent.com/magox2694/assets-myrealvet/main/footer-payhip/regalo-corso-alimentazione/Guida_5_errori_alimentazione.pdf", "_blank");
         // }, 1200);
       } else {
-        alert("Si è verificato un errore: " + (data.message || "Errore sconosciuto"));
+        alert("❌ Errore: " + (data.message || "Si è verificato un problema."));
       }
     } catch (err) {
-      console.error("Errore:", err);
-      alert("Errore di connessione. Riprova tra poco.");
+      console.error("Errore di rete:", err);
+      alert("⚠️ Errore di connessione. Riprova più tardi.");
     } finally {
-      if (submitBtn) {
-        submitBtn.disabled = false;
-        submitBtn.textContent = submitBtn.dataset._original || "Scarica gratis";
-      }
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
     }
   });
 });
