@@ -28,12 +28,12 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (!email) {
         msg.textContent = "Inserisci una email valida.";
-        msg.style.color = "#ffdddd";
+        msg.style.color = "#0b0b0bff";
         return;
       }
 
       msg.textContent = "⏳ Invio in corso...";
-      msg.style.color = "#fff";
+      msg.style.color = "#0b0b0bff";
 
       try {
         const res = await fetch(endpoint, {
@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.success) {
           msg.textContent = "🎉 Iscrizione completata! Download in corso...";
-          msg.style.color = "#c8ffcf";
+          msg.style.color = "#0b0b0bff";
           form.reset();
 
           // 🔽 Download immediato del file
@@ -65,12 +65,12 @@ document.addEventListener("DOMContentLoaded", () => {
         } else {
           msg.textContent =
             "⚠️ Errore: " + (data.message || "riprovare più tardi.");
-          msg.style.color = "#ffdddd";
+          msg.style.color = "#0b0b0bff";
         }
       } catch (err) {
         console.error("Errore iscrizione:", err);
         msg.textContent = "❌ Errore di connessione. Riprova.";
-        msg.style.color = "#ffdddd";
+        msg.style.color = "#0b0b0bff";
       }
     });
   });
