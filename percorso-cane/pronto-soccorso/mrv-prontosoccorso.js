@@ -1,69 +1,61 @@
-// MRV – Pronto Soccorso (versione aggiornata 08/10/2025)
+// === MRV Percorso Cane – Gestione Form Iscrizione ===
+// Versione base 2025-10
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🐾 MRV Pronto Soccorso – JS attivo");
+  console.log("🐶 MRV Percorso Cane JS attivo");
 
-  const form = document.getElementById("mrv-form-prontosoccorso");
-  if (!form) {
-    console.warn("❌ Form pronto soccorso non trovato");
-    return;
-  }
-
-  const nameInput = form.querySelector('input[name="name"]');
-  const emailInput = form.querySelector('input[name="email"]');
-  const submitBtn = form.querySelector("button");
-  const successMessage = form.querySelector(".mrv-success-message");
-
-  form.addEventListener("submit", async (e) => {
-    e.preventDefault();
-
-    const name = nameInput.value.trim();
-    const email = emailInput.value.trim();
-
-    if (!email) {
-      alert("Inserisci la tua email!");
-      emailInput.focus();
-      return;
-    }
-    if (!name) {
-      alert("Inserisci il tuo nome!");
-      nameInput.focus();
-      return;
-    }
-
-    // Feedback visivo
-    const originalText = submitBtn.textContent;
-    submitBtn.disabled = true;
-    submitBtn.textContent = "Invio...";
-
-    try {
-      const res = await fetch("https://diet.myrealvet.it/subscribe-prontosoccorso", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email }),
-      });
-
-      const data = await res.json();
-      console.log("📬 Risposta server:", data);
-
-      if (data.success) {
-        successMessage.style.display = "block";
-        successMessage.textContent = "✅ Guida inviata! Controlla la tua email.";
-        nameInput.value = "";
-        emailInput.value = "";
-
-        // opzionale: redirect o download automatico
-        // setTimeout(() => {
-        //   window.open("https://raw.githubusercontent.com/magox2694/assets-myrealvet/main/footer-payhip/regalo-corso-alimentazione/Guida_5_errori_alimentazione.pdf", "_blank");
-        // }, 1200);
-      } else {
-        alert("❌ Errore: " + (data.message || "Si è verificato un problema."));
+  // Gestione flip card
+  document.querySelectorAll(".mrv-flip-card").forEach((card) => {
+    card.addEventListener("click", (e) => {
+      // evita che il click sul form ri-giri la card
+      if (!e.target.closest("form")) {
+        card.classList.toggle("active");
       }
-    } catch (err) {
-      console.error("Errore di rete:", err);
-      alert("⚠️ Errore di connessione. Riprova più tardi.");
-    } finally {
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-    }
+    });
+  });
+
+  // Gestione invio form
+  document.querySelectorAll(".mrv-form").forEach((form) => {
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+
+      const card = form.closest(".mrv-flip-card");
+      const endpoint = card.dataset.endpoint;
+      const msg = form.querySelector(".mrv-msg");
+      const name = form.querySelector("input[name='name']").value.trim();
+      const email = form.querySelector("input[name='email']").value.trim();
+
+      if (!email) {
+        msg.textContent = "Inserisci una email valida.";
+        msg.style.color = "#ffdddd";
+        return;
+      }
+
+      msg.textContent = "⏳ Invio in corso...";
+      msg.style.color = "#fff";
+
+      try {
+        const res = await fetch(endpoint, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ name, email }),
+        });
+
+        const data = await res.json();
+        if (data.success) {
+          msg.textContent = "🎉 Iscrizione completata! Controlla la tua email.";
+          msg.style.color = "#c8ffcf";
+          form.reset();
+        } else {
+          msg.textContent = "⚠️ Errore: " + (data.message || "riprovare più tardi.");
+          msg.style.color = "#ffdddd";
+        }
+      } catch (err) {
+        console.error("Errore iscrizione:", err);
+        msg.textContent = "❌ Errore di connessione. Riprova.";
+        msg.style.color = "#ffdddd";
+      }
+    });
   });
 });
