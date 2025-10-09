@@ -1,20 +1,20 @@
-// === MRV Percorso Cane – Gestione Form + Download Diretto ===
-// Versione 2025-10-09 – compatibile con API Flask su myrealvet.it
+// === MRV Percorso Cane – Gestione Unificata ===
+// Compatibile con Flask /subscribe/<slug> – MyRealVet.it
+// Versione 2025-10-10
 
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("🐾 MRV Percorso Cane JS attivo");
+  console.log("🐶 MRV Percorso Cane – JS unificato attivo");
 
-  // Gestione flip card (click per girare)
+  // --- Effetto flip card ---
   document.querySelectorAll(".mrv-flip-card").forEach((card) => {
     card.addEventListener("click", (e) => {
-      // evita che il click dentro il form ri-giri la card
       if (!e.target.closest("form")) {
         card.classList.toggle("active");
       }
     });
   });
 
-  // Gestione invio form e download automatico
+  // --- Gestione invio form e download automatico ---
   document.querySelectorAll(".mrv-form").forEach((form) => {
     form.addEventListener("submit", async (e) => {
       e.preventDefault();
@@ -22,18 +22,20 @@ document.addEventListener("DOMContentLoaded", () => {
       const card = form.closest(".mrv-flip-card");
       const endpoint = card.dataset.endpoint;
       const downloadURL = card.dataset.download;
+      const slug = card.dataset.slug || "(sconosciuto)";
       const msg = form.querySelector(".mrv-msg");
+
       const name = form.querySelector("input[name='name']").value.trim();
       const email = form.querySelector("input[name='email']").value.trim();
 
-      if (!email) {
+      if (!email || !email.includes("@")) {
         msg.textContent = "Inserisci una email valida.";
-        msg.style.color = "#0b0b0bff";
+        msg.style.color = "#222";
         return;
       }
 
       msg.textContent = "⏳ Invio in corso...";
-      msg.style.color = "#0b0b0bff";
+      msg.style.color = "#444";
 
       try {
         const res = await fetch(endpoint, {
@@ -46,31 +48,33 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (data.success) {
           msg.textContent = "🎉 Iscrizione completata! Download in corso...";
-          msg.style.color = "#0b0b0bff";
+          msg.style.color = "#222";
           form.reset();
 
-          // 🔽 Download immediato del file
+          console.log(`✅ Iscrizione completata per ${slug}`);
+
+          // 🔽 Download automatico file
           setTimeout(() => {
             if (downloadURL) {
               const link = document.createElement("a");
               link.href = downloadURL;
-              link.download = ""; // forza il download
+              link.setAttribute("download", "");
               document.body.appendChild(link);
               link.click();
               document.body.removeChild(link);
             } else {
-              console.warn("⚠️ Nessun URL di download specificato per questa card.");
+              console.warn(`⚠️ Nessun URL di download per ${slug}`);
             }
-          }, 600);
+          }, 700);
         } else {
-          msg.textContent =
-            "⚠️ Errore: " + (data.message || "riprovare più tardi.");
-          msg.style.color = "#0b0b0bff";
+          msg.textContent = "⚠️ " + (data.message || "Errore, riprova più tardi.");
+          msg.style.color = "#222";
+          console.warn(`⚠️ Errore backend (${slug}):`, data.message);
         }
       } catch (err) {
-        console.error("Errore iscrizione:", err);
+        console.error(`❌ Errore iscrizione ${slug}:`, err);
         msg.textContent = "❌ Errore di connessione. Riprova.";
-        msg.style.color = "#0b0b0bff";
+        msg.style.color = "#222";
       }
     });
   });
