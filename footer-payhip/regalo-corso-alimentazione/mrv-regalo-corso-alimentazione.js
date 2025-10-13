@@ -1,8 +1,8 @@
 // @ts-nocheck
-// MRV Corso Alimentazione – Popup regalo
+// MRV Corso Alimentazione – Popup regalo migliorato con checkbox consenso
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("🎁 MRV Corso Alimentazione JS attivo");
+  console.log("🎁 MRV Corso Alimentazione JS migliorato attivo");
 
   const popupHTML = `
     <div id="mrv-popup-alimentazione" class="mrv-popup-alimentazione">
@@ -21,9 +21,14 @@ document.addEventListener("DOMContentLoaded", function () {
           <div class="mrv-popup-text-alimentazione" id="mrv-popup-body-alimentazione">
             <h2>🎁 Guida gratuita!</h2>
             <p>Scopri subito i <strong>5 errori da evitare nell’alimentazione del tuo cane</strong>.</p>
+
             <form id="mrv-form-alimentazione">
               <input type="text" id="mrv-name-alimentazione" placeholder="Il tuo nome" required />
               <input type="email" id="mrv-email-alimentazione" placeholder="La tua email" required />
+              <label>
+                <input type="checkbox" id="mrv-consent-alimentazione" required />
+                Acconsento a ricevere email con offerte e consigli da MyRealVet
+              </label>
               <button type="submit">📘 Scarica ora gratis</button>
             </form>
             <p id="mrv-message-alimentazione" style="margin-top:10px;font-size:0.9em;"></p>
@@ -42,49 +47,51 @@ document.addEventListener("DOMContentLoaded", function () {
   const closeBtn = document.querySelector(".mrv-close-alimentazione");
 
   // Mostra popup dopo 8 secondi
-  setTimeout(() => {
-    popup.classList.add("active");
-  }, 8000);
+  setTimeout(() => popup.classList.add("active"), 8000);
 
-  closeBtn.addEventListener("click", () => popup.classList.remove("active"));
+  // Chiudi popup (X o clic esterno)
+  closeBtn.addEventListener("click", closePopup);
   popup.addEventListener("click", (e) => {
-    if (e.target.id === "mrv-popup-alimentazione") popup.classList.remove("active");
+    if (e.target.id === "mrv-popup-alimentazione") closePopup();
   });
 
-  // === Bottone sticky centrato per riaprire popup ===
+  // === Sticky button ===
   const stickyBtn = document.createElement("button");
   stickyBtn.className = "mrv-sticky-btn";
   stickyBtn.innerHTML = "🎁 Scarica la guida gratuita";
+  stickyBtn.style.display = "none";
   document.body.appendChild(stickyBtn);
 
-  // Nascosto di default
-  stickyBtn.style.display = "none";
-
-  // Mostra il bottone dopo la chiusura del popup
-  closeBtn.addEventListener("click", () => {
-    popup.classList.remove("active");
-    stickyBtn.style.display = "block";
-  });
-
-  // Riapre il popup e nasconde il bottone
   stickyBtn.addEventListener("click", () => {
     popup.classList.add("active");
     stickyBtn.style.display = "none";
   });
 
-  // (Opzionale) appare anche da solo dopo 30 secondi
+  function closePopup() {
+    popup.classList.remove("active");
+    stickyBtn.style.display = "block";
+  }
+
+  // Appare anche se popup non aperto dopo 30s
   setTimeout(() => {
     if (!popup.classList.contains("active")) stickyBtn.style.display = "block";
   }, 30000);
 
-
+  // === Invio form ===
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     message.style.color = "#555";
     message.textContent = "⏳ Invio in corso...";
 
-    const name = document.getElementById("mrv-name-alimentazione").value;
-    const email = document.getElementById("mrv-email-alimentazione").value;
+    const name = document.getElementById("mrv-name-alimentazione").value.trim();
+    const email = document.getElementById("mrv-email-alimentazione").value.trim();
+    const consent = document.getElementById("mrv-consent-alimentazione").checked;
+
+    if (!consent) {
+      message.style.color = "red";
+      message.textContent = "⚠ Devi accettare per continuare.";
+      return;
+    }
 
     try {
       const response = await fetch("https://myrealvet.it/subscribe-corso-alimentazione", {
@@ -103,17 +110,13 @@ document.addEventListener("DOMContentLoaded", function () {
             <strong>Controlla anche la tua email</strong> per ricevere altri consigli da Angelica 🐾
           </p>
         `;
-
-        // Avvia download automatico
         setTimeout(() => {
           window.location.href = "https://raw.githubusercontent.com/magox2694/assets-myrealvet/main/footer-payhip/regalo-corso-alimentazione/Guida_5_errori_alimentazione.pdf";
         }, 1500);
-
       } else {
         message.style.color = "red";
         message.textContent = "⚠️ " + (result.message || "Errore imprevisto");
       }
-
     } catch (err) {
       console.error("Errore:", err);
       message.style.color = "red";

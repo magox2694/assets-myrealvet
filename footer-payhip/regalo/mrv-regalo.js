@@ -1,5 +1,5 @@
 // @ts-nocheck
-// MRV Regalo Popup (Homepage) – Versione migliorata con sticky button e errori semplici
+// MRV Regalo Popup (Homepage) – Versione migliorata con sticky button e messaggi semplificati
 
 document.addEventListener("DOMContentLoaded", function () {
   console.log("✅ MRV Regalo JS migliorato attivo");
@@ -73,7 +73,7 @@ document.addEventListener("DOMContentLoaded", function () {
     stickyBtn.style.display = "block";
   }
 
-  // Appare anche se popup non aperto dopo 30s
+  // Appare anche se popup mai aperto dopo 30s
   setTimeout(() => {
     if (!popup.classList.contains("active")) stickyBtn.style.display = "block";
   }, 30000);
