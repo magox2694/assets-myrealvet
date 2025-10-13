@@ -33,7 +33,7 @@
 }
 .mrv-popup-text button {
   background: linear-gradient(135deg,#28a745,#1697c7);
-  color:#1697c7; border:none; padding:1em; border-radius:12px;
+  color:#ffffff; border:none; padding:1em; border-radius:12px;
   font-size:1.1rem; cursor:pointer; font-weight:600;
   transition: transform .2s;
 }
