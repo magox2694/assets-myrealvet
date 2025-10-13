@@ -1,8 +1,8 @@
 // @ts-nocheck
-// MRV Regalo Popup
+// MRV Regalo Popup (Homepage) – Versione migliorata con sticky button e errori semplici
 
 document.addEventListener("DOMContentLoaded", function () {
-  console.log("✅ MRV Regalo JS caricato e DOM pronto");
+  console.log("✅ MRV Regalo JS migliorato attivo");
 
   const popupHTML = `
     <div id="mrv-popup" class="mrv-popup">
@@ -27,7 +27,8 @@ document.addEventListener("DOMContentLoaded", function () {
               <input type="text" id="mrv-name" placeholder="Il tuo nome" required />
               <input type="email" id="mrv-email" placeholder="La tua email" required />
               <label>
-                <input type="checkbox" id="mrv-consent" required /> Acconsento a ricevere email con offerte e sconti
+                <input type="checkbox" id="mrv-consent" required />
+                Acconsento a ricevere email con offerte e sconti
               </label>
               <button type="submit">📘 Scarica subito GRATIS</button>
             </form>
@@ -38,7 +39,6 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
   `;
 
-  // Inietta il popup nel body
   document.body.insertAdjacentHTML("beforeend", popupHTML);
 
   const popup = document.getElementById("mrv-popup");
@@ -48,43 +48,44 @@ document.addEventListener("DOMContentLoaded", function () {
   const closeBtn = document.querySelector(".mrv-close");
 
   // Mostra popup dopo 6 secondi
-  setTimeout(() => {
-    popup.classList.add("active");
-  }, 6000);
+  setTimeout(() => popup.classList.add("active"), 6000);
 
-  // Chiudi popup cliccando sulla X
-  if (closeBtn) {
-    closeBtn.addEventListener("click", () => {
-      popup.classList.remove("active");
-    });
-  }
-
-  // Chiudi popup cliccando fuori dal contenuto
+  // Chiudi popup (X o clic esterno)
+  closeBtn.addEventListener("click", closePopup);
   popup.addEventListener("click", (e) => {
-    if (e.target.id === "mrv-popup") {
-      popup.classList.remove("active");
-    }
+    if (e.target.id === "mrv-popup") closePopup();
   });
 
-  // Funzione helper: messaggi di errore più carini
-  function formatError(err) {
-    if (err.includes("MEMBER_EXISTS_WITH_EMAIL_ADDRESS")) {
-      return "⚠️ Sei già iscritto con questa email! Controlla la tua posta (anche in Spam/Promozioni).";
-    }
-    if (err.includes("API_KEY_INVALID")) {
-      return "❌ Errore tecnico, contatta l’amministratore.";
-    }
-    return "❌ Si è verificato un errore. Riprova più tardi.";
+  // === Sticky button ===
+  const stickyBtn = document.createElement("button");
+  stickyBtn.className = "mrv-sticky-btn";
+  stickyBtn.innerHTML = "🎁 Scarica i 2 eBook gratuiti";
+  stickyBtn.style.display = "none";
+  document.body.appendChild(stickyBtn);
+
+  stickyBtn.addEventListener("click", () => {
+    popup.classList.add("active");
+    stickyBtn.style.display = "none";
+  });
+
+  function closePopup() {
+    popup.classList.remove("active");
+    stickyBtn.style.display = "block";
   }
 
-  // Submit form
+  // Appare anche se popup non aperto dopo 30s
+  setTimeout(() => {
+    if (!popup.classList.contains("active")) stickyBtn.style.display = "block";
+  }, 30000);
+
+  // === Invio form ===
   form.addEventListener("submit", async (e) => {
     e.preventDefault();
     message.style.color = "#555";
     message.textContent = "⏳ Invio in corso...";
 
-    const name = document.getElementById("mrv-name").value;
-    const email = document.getElementById("mrv-email").value;
+    const name = document.getElementById("mrv-name").value.trim();
+    const email = document.getElementById("mrv-email").value.trim();
     const consent = document.getElementById("mrv-consent").checked;
 
     if (!consent) {
@@ -102,12 +103,11 @@ document.addEventListener("DOMContentLoaded", function () {
 
       const result = await response.json();
       if (result.success) {
-        // Messaggio di successo con stile MRV
         popupBody.innerHTML = `
-          <h2 style="color:#1697c7; font-family:Quicksand, sans-serif;">🎉 Congratulazioni!</h2>
+          <h2 style="color:#1697c7;">🎉 Congratulazioni!</h2>
           <p style="font-size:1.1em; color:#0b1220;">
-            Il tuo regalo è stato inviato alla tua email. <br>
-            Controlla anche la cartella <strong>Promozioni</strong> o <strong>Spam</strong>.
+            Il tuo regalo è stato inviato alla tua email.<br>
+            Controlla anche <strong>Promozioni</strong> o <strong>Spam</strong>.
           </p>
           <p style="margin-top:1em; font-size:0.9em; color:#28a745;">
             Grazie per aver scelto <strong>MyRealVet</strong> 🐾
@@ -115,10 +115,10 @@ document.addEventListener("DOMContentLoaded", function () {
         `;
       } else {
         message.style.color = "red";
-        message.textContent = formatError(result.message || "");
+        message.textContent = "❌ Errore di invio, riprova più tardi.";
       }
     } catch (err) {
-      console.error("Errore API:", err);
+      console.error("Errore:", err);
       message.style.color = "red";
       message.textContent = "❌ Problema di connessione, riprova.";
     }
