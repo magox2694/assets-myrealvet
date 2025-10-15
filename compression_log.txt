@@ -1,1 +1,2 @@
-❌ Errore su img\payhip\landing-page\corso-alimentazione.webp: Command '['cwebp', '-quiet', '-q', '70', 'img\\payhip\\landing-page\\corso-alimentazione.webp', '-o', 'img\\payhip\\landing-page\\corso-alimentazione.webp']' returned non-zero exit status 4294967295.
+=== Log compressione immagini MyRealVet ===
+✅ C:\Users\email\Desktop\GITHUB MAGOX\assets-myrealvet\consulenza\cover-consulenza.png ridotto del 0.0%
