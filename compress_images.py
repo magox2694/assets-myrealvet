@@ -59,7 +59,7 @@ def main():
 if __name__ == "__main__":
     #main()
     # Test di compressione su un'immagine specifica
-    test_image = Path("img/payhip/landing-page/fotoprofilo.webp")
+    test_image = Path("img/payhip/landing-page/corso-alimentazione.webp")
     compress_image(test_image)
     print("✅ Compressione test completata.")
 
