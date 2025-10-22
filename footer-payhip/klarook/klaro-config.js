@@ -170,32 +170,54 @@ var klaroConfig = {
 })();
 // =============================
 // =====================================================
-// 🧩 Fix Klaro su Payhip – Riattiva callback dopo "Accetta tutti"
+// ✅ Fix finale Klaro su Payhip – hook diretto al Manager
 // =====================================================
-document.addEventListener("click", function (e) {
-  const btn = e.target;
-  if (btn && (btn.classList.contains("klaro-accept-all") || btn.textContent.includes("Accetta tutti"))) {
-    console.log("⚡ Forzo riattivazione callback dopo 'Accetta tutti' (con attesa)");
-    
-    // attendi 1.5s per dare tempo a Klaro di salvare i consensi
-    setTimeout(() => {
-      if (typeof klaro !== "undefined" && klaro.getManager) {
-        const manager = klaro.getManager();
-        const consents = manager.getConsents();
-        console.log("📊 Consensi attuali:", consents);
 
-        manager.config.services.forEach((service) => {
-          const consent = consents[service.name];
-          if (consent === true && typeof service.callback === "function") {
-            console.log(`🔁 Eseguo callback manuale per: ${service.name}`);
-            try {
-              service.callback(true, service);
-            } catch (err) {
-              console.warn(`⚠️ Errore callback per ${service.name}:`, err);
-            }
+// Quando Klaro è pronto e inizializzato
+window.addEventListener("klaroInitialized", function () {
+  try {
+    const manager = klaro.getManager();
+    console.log("🎯 Hook attivo: Klaro Manager pronto");
+
+    // Osserva i cambi di consenso in tempo reale
+    manager.watch(function (consents, changed) {
+      console.log("📊 Cambi di consenso rilevati:", changed);
+
+      Object.entries(consents).forEach(([serviceName, isAllowed]) => {
+        const service = manager.config.services.find(s => s.name === serviceName);
+        if (service && typeof service.callback === "function") {
+          console.log(
+            `${isAllowed ? "✅" : "❌"} Callback live per ${serviceName}`
+          );
+          try {
+            service.callback(isAllowed, service);
+          } catch (err) {
+            console.warn(`⚠️ Errore callback per ${serviceName}:`, err);
           }
-        });
-      }
-    }, 1500);
+        }
+      });
+    });
+  } catch (err) {
+    console.error("❌ Hook Klaro non inizializzato:", err);
   }
 });
+
+// Evento di sicurezza se Klaro non emette "klaroInitialized"
+setTimeout(() => {
+  if (typeof klaro !== "undefined" && klaro.getManager) {
+    const manager = klaro.getManager();
+    if (manager && !manager._watcherHooked) {
+      console.log("⚙️ Hook di sicurezza attivo per Klaro");
+      manager._watcherHooked = true;
+      manager.watch(function (consents, changed) {
+        console.log("📊 Cambi di consenso (fallback):", changed);
+        Object.entries(consents).forEach(([serviceName, isAllowed]) => {
+          const service = manager.config.services.find(s => s.name === serviceName);
+          if (service && typeof service.callback === "function") {
+            service.callback(isAllowed, service);
+          }
+        });
+      });
+    }
+  }
+}, 2000);
