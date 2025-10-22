@@ -1,0 +1,132 @@
+/* ======================================
+   Klaro Cookie Banner – MyRealVet Theme
+   Personalizzazione visiva su base klaro.min.css
+   ====================================== */
+
+.klaro {
+  --brand: #1697c7;
+  --accent: #28a745;
+  --bg: #ffffff;
+  --text: #0b1220;
+  --muted: #5b677a;
+  --radius: 12px;
+  --shadow: 0 8px 24px rgba(0,0,0,0.1);
+  font-family: "Lato", sans-serif !important;
+  font-size: 15px;
+}
+
+/* HEADER DEL MODAL */
+.klaro .cookie-modal .cm-modal .cm-header {
+  background-color: var(--brand);
+  color: #fff;
+  border-bottom: none;
+  text-align: center;
+  border-radius: var(--radius) var(--radius) 0 0;
+}
+.klaro .cookie-modal .cm-modal .cm-header h1 {
+  font-family: "Quicksand", sans-serif !important;
+  font-weight: 700;
+  font-size: 1.6rem;
+  color: #fff;
+}
+
+/* CORPO */
+.klaro .cookie-modal .cm-modal .cm-body {
+  background-color: var(--bg);
+  color: var(--text);
+  padding: 1.5em;
+  box-shadow: var(--shadow);
+}
+
+/* PULSANTI */
+.klaro .cookie-modal .cm-btn,
+.klaro .cookie-notice .cm-btn {
+  border: none;
+  border-radius: var(--radius);
+  padding: 0.6em 1.4em;
+  font-weight: 600;
+  font-family: "Quicksand", sans-serif !important;
+  transition: all 0.3s ease;
+  cursor: pointer;
+}
+
+.klaro .cookie-modal .cm-btn.cm-btn-success,
+.klaro .cookie-notice .cm-btn.cm-btn-success {
+  background-color: var(--brand);
+  color: #fff;
+}
+.klaro .cookie-modal .cm-btn.cm-btn-success:hover,
+.klaro .cookie-notice .cm-btn.cm-btn-success:hover {
+  background-color: #0f78a5;
+  transform: translateY(-1px);
+  box-shadow: var(--shadow);
+}
+
+.klaro .cookie-modal .cm-btn.cm-btn-close,
+.klaro .cookie-notice .cm-btn.cm-btn-close {
+  background-color: #e9ecef;
+  color: var(--text);
+}
+.klaro .cookie-modal .cm-btn.cm-btn-close:hover,
+.klaro .cookie-notice .cm-btn.cm-btn-close:hover {
+  background-color: #d6d8da;
+  transform: translateY(-1px);
+}
+
+/* SWITCH (toggle) */
+.klaro .cookie-modal .cm-list-label .slider {
+  background-color: #eaeaea;
+}
+.klaro .cookie-modal .cm-list-input:checked + .cm-list-label .slider {
+  background-color: var(--accent);
+}
+
+/* AVVISO IN BASSO */
+.klaro .cookie-notice {
+  background-color: #fff !important;
+  color: var(--text) !important;
+  border-radius: var(--radius);
+  border: 1px solid #eaeaea;
+  box-shadow: var(--shadow);
+  padding: 1.2em;
+}
+.klaro .cookie-notice p {
+  color: var(--text);
+  font-size: 0.95rem;
+  line-height: 1.4;
+}
+
+/* LINK */
+.klaro a {
+  color: var(--brand);
+  text-decoration: none;
+  font-weight: 500;
+}
+.klaro a:hover {
+  text-decoration: underline;
+}
+
+/* ANIMAZIONE */
+.klaro .cookie-notice {
+  animation: fadeInUp 0.5s ease;
+}
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* DARK MODE AUTOMATICA */
+@media (prefers-color-scheme: dark) {
+  .klaro .cookie-modal .cm-modal.cm-klaro,
+  .klaro .cookie-notice {
+    background-color: #121212 !important;
+    color: #f1f1f1 !important;
+  }
+  .klaro .cookie-modal .cm-btn.cm-btn-success {
+    background-color: #1697c7;
+  }
+  .klaro .cookie-modal .cm-btn.cm-btn-close {
+    background-color: #2a2a2a;
+    color: #fff;
+  }
+}

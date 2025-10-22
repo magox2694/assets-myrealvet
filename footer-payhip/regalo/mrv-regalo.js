@@ -1,16 +1,21 @@
-// @ts-nocheck
-// MRV Regalo Popup (Homepage) – Versione migliorata con sticky button e messaggi semplificati
+// =====================================================
+// MRV Regalo Popup – Versione controllata da Klaro GDPR
+// ©2025 MyRealVet – Dott.ssa Angelica Spaccini
+// Gestore tecnico: Mihai Muhulica
+// =====================================================
 
-document.addEventListener("DOMContentLoaded", function () {
-  console.log("✅ MRV Regalo JS migliorato attivo");
+// ⚠️ NON avviare automaticamente: Klaro lo chiama con mrvRegaloInit()
+function mrvRegaloInit() {
+  console.log("🎁 MRV Regalo – Avvio dopo consenso Klaro");
 
+  // === HTML del popup ===
   const popupHTML = `
     <div id="mrv-popup" class="mrv-popup">
       <div class="mrv-popup-content">
         <button class="mrv-close" aria-label="Chiudi popup">
-          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" 
-              viewBox="0 0 24 24" fill="none" 
-              stroke="#333" stroke-width="2.5" 
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none"
+              stroke="#333" stroke-width="2.5"
               stroke-linecap="round" stroke-linejoin="round">
             <line x1="18" y1="6" x2="6" y2="18" />
             <line x1="6" y1="6" x2="18" y2="18" />
@@ -32,6 +37,7 @@ document.addEventListener("DOMContentLoaded", function () {
               </label>
               <button type="submit">📘 Scarica subito GRATIS</button>
             </form>
+
             <p id="mrv-message" style="margin-top:10px;font-size:0.9em;"></p>
           </div>
         </div>
@@ -39,6 +45,7 @@ document.addEventListener("DOMContentLoaded", function () {
     </div>
   `;
 
+  // === Inserisci popup nel DOM ===
   document.body.insertAdjacentHTML("beforeend", popupHTML);
 
   const popup = document.getElementById("mrv-popup");
@@ -47,10 +54,10 @@ document.addEventListener("DOMContentLoaded", function () {
   const popupBody = document.getElementById("mrv-popup-body");
   const closeBtn = document.querySelector(".mrv-close");
 
-  // Mostra popup dopo 6 secondi
+  // === Mostra popup dopo 6 secondi ===
   setTimeout(() => popup.classList.add("active"), 6000);
 
-  // Chiudi popup (X o clic esterno)
+  // === Chiudi popup (X o clic esterno) ===
   closeBtn.addEventListener("click", closePopup);
   popup.addEventListener("click", (e) => {
     if (e.target.id === "mrv-popup") closePopup();
@@ -73,7 +80,7 @@ document.addEventListener("DOMContentLoaded", function () {
     stickyBtn.style.display = "block";
   }
 
-  // Appare anche se popup mai aperto dopo 30s
+  // Mostra sticky button anche se popup non aperto dopo 30s
   setTimeout(() => {
     if (!popup.classList.contains("active")) stickyBtn.style.display = "block";
   }, 30000);
@@ -98,7 +105,7 @@ document.addEventListener("DOMContentLoaded", function () {
       const response = await fetch("https://myrealvet.it/subscribe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ name, email })
+        body: JSON.stringify({ name, email }),
       });
 
       const result = await response.json();
@@ -123,4 +130,6 @@ document.addEventListener("DOMContentLoaded", function () {
       message.textContent = "❌ Problema di connessione, riprova.";
     }
   });
-});
+
+  console.log("✅ MRV Regalo Popup pronto e visibile");
+}
