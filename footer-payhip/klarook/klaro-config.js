@@ -170,19 +170,26 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 // =====================================================
-// 🔧 FIX DEFINITIVO PAYHIP – Accetta Tutti / Salva Preferenze
+// 🔧 FIX DEFINITIVO PAYHIP – forza consensi + callback
 // =====================================================
 (function () {
-  function forceCallbacksFromStorage() {
+  function forceAllConsentsTrue() {
     try {
       const manager = klaro.getManager ? klaro.getManager() : null;
       if (!manager) return console.warn("⚠️ Nessun manager Klaro disponibile.");
 
-      const consents = manager.consents || {};
-      console.log("📦 Consensi letti da storage Klaro:", consents);
+      // ✅ Forza tutti i servizi su TRUE
+      const names = Object.keys(manager.consents || {});
+      names.forEach(name => manager.updateConsent(name, true));
+      manager.saveAndApplyConsents();
 
+      console.log("✅ Tutti i consensi forzati su TRUE (sandbox Payhip)");
+      const consents = manager.consents;
+      console.log("📦 Consensi effettivi dopo forzatura:", consents);
+
+      // --- Esegui i callback manuali ---
       if (consents["tawk"]) {
-        console.log("⚡ Forzo attivazione Tawk.to (post Accetta Tutti)");
+        console.log("⚡ Forzo attivazione Tawk.to");
         const s1 = document.createElement("script");
         s1.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
         s1.async = true;
@@ -191,7 +198,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (consents["google-analytics"]) {
-        console.log("⚡ Forzo attivazione Google Analytics (post Accetta Tutti)");
+        console.log("⚡ Forzo attivazione Google Analytics");
         const s = document.createElement("script");
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-74MREDQSG1";
         s.async = true;
@@ -203,27 +210,27 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (consents["mrvPopup"] && typeof mrvRegaloInit === "function") {
-        console.log("⚡ Forzo attivazione popup MRV (post Accetta Tutti)");
+        console.log("⚡ Forzo attivazione popup MRV");
         mrvRegaloInit();
       }
     } catch (err) {
-      console.error("❌ Errore nel forzare i callback Klaro:", err);
+      console.error("❌ Errore nel forzare consensi:", err);
     }
   }
 
-  // Intercetta click su "Accetta tutti"
+  // Intercetta "Accetta tutti"
   document.addEventListener("click", e => {
     if (e.target && e.target.textContent && e.target.textContent.includes("Accetta tutti")) {
-      console.log("🧩 Click su 'Accetta tutti' intercettato – applico callback forzati...");
-      setTimeout(forceCallbacksFromStorage, 1200);
+      console.log("🧩 Click su 'Accetta tutti' intercettato – forzo tutti i consensi...");
+      setTimeout(forceAllConsentsTrue, 800);
     }
   });
 
-  // Intercetta anche salvataggio preferenze manuale
+  // Intercetta anche "Salva preferenze"
   document.addEventListener("click", e => {
     if (e.target && e.target.textContent && e.target.textContent.includes("Salva preferenze")) {
       console.log("🧩 Click su 'Salva preferenze' intercettato – applico callback forzati...");
-      setTimeout(forceCallbacksFromStorage, 1200);
+      setTimeout(forceAllConsentsTrue, 800);
     }
   });
 })();
