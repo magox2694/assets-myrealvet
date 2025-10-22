@@ -4,13 +4,29 @@
 // Gestore tecnico: Mihai Muhulica
 // =====================================================
 
-// ⚠️ NON avviare automaticamente: Klaro lo chiama con mrvRegaloInit()
+// Evita l'esecuzione automatica: attendi Klaro
+if (typeof klaro !== "undefined" && klaro.getManager) {
+  const manager = klaro.getManager();
+  const hasConsent = manager.getConsent("mrvPopup");
+  if (!hasConsent) {
+    console.log("🚫 MRV Popup non caricato (manca consenso marketing)");
+  } else {
+    console.log("🎁 MRV Popup caricato dopo consenso già espresso");
+    mrvRegaloInit();
+  }
+} else {
+  console.log("🕓 Klaro non ancora pronto, il popup sarà gestito dal callback GDPR");
+}
+
+// =====================================================
+// Funzione di inizializzazione (richiamata da Klaro o sopra)
+// =====================================================
 function mrvRegaloInit() {
   console.log("🎁 MRV Regalo – Avvio dopo consenso Klaro");
 
   // === HTML del popup ===
   const popupHTML = `
-    <div id="mrv-popup" class="mrv-popup">
+    <div id="mrv-popup" class="mrv-popup" style="display:none;">
       <div class="mrv-popup-content">
         <button class="mrv-close" aria-label="Chiudi popup">
           <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
@@ -49,6 +65,8 @@ function mrvRegaloInit() {
   document.body.insertAdjacentHTML("beforeend", popupHTML);
 
   const popup = document.getElementById("mrv-popup");
+  popup.style.display = "block";
+
   const form = document.getElementById("mrv-form");
   const message = document.getElementById("mrv-message");
   const popupBody = document.getElementById("mrv-popup-body");
