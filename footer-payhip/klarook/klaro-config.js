@@ -170,26 +170,32 @@ var klaroConfig = {
 })();
 // =============================
 // =====================================================
-// 🧩 Fix Klaro su Payhip: riattiva callback su "Accetta tutti"
+// 🧩 Fix Klaro su Payhip – Riattiva callback dopo "Accetta tutti"
 // =====================================================
 document.addEventListener("click", function (e) {
   const btn = e.target;
   if (btn && (btn.classList.contains("klaro-accept-all") || btn.textContent.includes("Accetta tutti"))) {
-    console.log("⚡ Forzo riattivazione callback dopo 'Accetta tutti'");
+    console.log("⚡ Forzo riattivazione callback dopo 'Accetta tutti' (con attesa)");
+    
+    // attendi 1.5s per dare tempo a Klaro di salvare i consensi
     setTimeout(() => {
       if (typeof klaro !== "undefined" && klaro.getManager) {
         const manager = klaro.getManager();
-        // Esegui i callback per tutti i servizi consentiti
+        const consents = manager.getConsents();
+        console.log("📊 Consensi attuali:", consents);
+
         manager.config.services.forEach((service) => {
-          if (manager.confirmed && manager.confirmed[service.name]) {
-            const consent = manager.confirmed[service.name];
-            if (consent && typeof service.callback === "function") {
-              console.log(`🔁 Richiamo callback per: ${service.name}`);
+          const consent = consents[service.name];
+          if (consent === true && typeof service.callback === "function") {
+            console.log(`🔁 Eseguo callback manuale per: ${service.name}`);
+            try {
               service.callback(true, service);
+            } catch (err) {
+              console.warn(`⚠️ Errore callback per ${service.name}:`, err);
             }
           }
         });
       }
-    }, 500);
+    }, 1500);
   }
 });
