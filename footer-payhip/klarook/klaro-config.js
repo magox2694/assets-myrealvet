@@ -15,7 +15,7 @@
   }
 })();
 
-// --- CONFIGURAZIONE ---
+// --- CONFIGURAZIONE PRINCIPALE ---
 var klaroConfig = {
   version: 1,
   elementID: "klaro",
@@ -54,12 +54,16 @@ var klaroConfig = {
   },
 
   services: [
-    // --- Necessari ---
+    // =========================
+    // ⚙️ COOKIE TECNICI PAYHIP
+    // =========================
     { name: "payhip", title: "Funzioni base del sito", purposes: ["necessary"], required: true, default: true },
     { name: "stripe", title: "Stripe – Pagamenti", purposes: ["necessary"], required: true, default: true },
     { name: "paypal", title: "PayPal – Pagamenti", purposes: ["necessary"], required: true, default: true },
 
-    // --- Funzionali ---
+    // =========================
+    // ⚙️ FUNZIONALI
+    // =========================
     {
       name: "formspree",
       title: "Formspree – Invio moduli",
@@ -85,7 +89,9 @@ var klaroConfig = {
       }
     },
 
-    // --- Analytics ---
+    // =========================
+    // 📈 ANALYTICS
+    // =========================
     {
       name: "google-analytics",
       title: "Google Analytics",
@@ -107,7 +113,9 @@ var klaroConfig = {
       }
     },
 
-    // --- Marketing ---
+    // =========================
+    // 💌 MARKETING / POPUP
+    // =========================
     {
       name: "emailoctopus",
       title: "EmailOctopus – Newsletter",
@@ -139,18 +147,12 @@ document.addEventListener("DOMContentLoaded", () => {
         klaro.setup(klaroConfig);
         console.log("✅ Klaro avviato su Payhip");
 
-        // 🎯 Listener globale: scatta ogni volta che l’utente salva o accetta
+        // Listener globale: scatta ogni volta che l’utente salva o accetta
         if (window.klaro && typeof klaro.on === "function") {
           klaro.on("save", consents => {
             console.log("💾 Consenso aggiornato:", consents);
-
-            // Se accetta tutti → forza i callback dei servizi
-            if (consents["mrvPopup"]) {
-              console.log("⚡ Attivo MRV popup post-consenso");
-              if (typeof mrvRegaloInit === "function") mrvRegaloInit();
-            }
+            if (consents["mrvPopup"] && typeof mrvRegaloInit === "function") mrvRegaloInit();
             if (consents["tawk"]) {
-              console.log("⚡ Attivo chat post-consenso");
               const s = document.createElement("script");
               s.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
               s.async = true;
@@ -166,38 +168,62 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 800);
 });
-// --- PATCH: Forza callback dopo "Accetta tutti" (Payhip fix) ---
-document.addEventListener("click", e => {
-  if (e.target && e.target.textContent.includes("Accetta tutti")) {
-    console.log("⚡ Forzo riattivazione callback dopo 'Accetta tutti' (Payhip sandbox)");
-    setTimeout(() => {
-      try {
-        const consents = klaro.getManager().consents;
-        if (consents["tawk"]) {
-          console.log("⚡ Forzo chat post-consenso");
-          const s = document.createElement("script");
-          s.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
-          s.async = true;
-          document.head.appendChild(s);
-        }
-        if (consents["mrvPopup"]) {
-          console.log("⚡ Forzo popup post-consenso");
-          if (typeof mrvRegaloInit === "function") mrvRegaloInit();
-        }
-        if (consents["google-analytics"]) {
-          console.log("⚡ Forzo analytics post-consenso");
-          const s = document.createElement("script");
-          s.src = "https://www.googletagmanager.com/gtag/js?id=G-74MREDQSG1";
-          s.async = true;
-          document.head.appendChild(s);
-          window.dataLayer = window.dataLayer || [];
-          function gtag() { dataLayer.push(arguments); }
-          gtag("js", new Date());
-          gtag("config", "G-74MREDQSG1");
-        }
-      } catch (err) {
-        console.warn("⚠️ Errore nel forzare i callback:", err);
+
+// =====================================================
+// 🔧 FIX DEFINITIVO PAYHIP – Accetta Tutti / Salva Preferenze
+// =====================================================
+(function () {
+  function forceCallbacksFromStorage() {
+    try {
+      const manager = klaro.getManager ? klaro.getManager() : null;
+      if (!manager) return console.warn("⚠️ Nessun manager Klaro disponibile.");
+
+      const consents = manager.consents || {};
+      console.log("📦 Consensi letti da storage Klaro:", consents);
+
+      if (consents["tawk"]) {
+        console.log("⚡ Forzo attivazione Tawk.to (post Accetta Tutti)");
+        const s1 = document.createElement("script");
+        s1.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
+        s1.async = true;
+        s1.charset = "UTF-8";
+        document.head.appendChild(s1);
       }
-    }, 1000);
+
+      if (consents["google-analytics"]) {
+        console.log("⚡ Forzo attivazione Google Analytics (post Accetta Tutti)");
+        const s = document.createElement("script");
+        s.src = "https://www.googletagmanager.com/gtag/js?id=G-74MREDQSG1";
+        s.async = true;
+        document.head.appendChild(s);
+        window.dataLayer = window.dataLayer || [];
+        function gtag() { dataLayer.push(arguments); }
+        gtag("js", new Date());
+        gtag("config", "G-74MREDQSG1");
+      }
+
+      if (consents["mrvPopup"] && typeof mrvRegaloInit === "function") {
+        console.log("⚡ Forzo attivazione popup MRV (post Accetta Tutti)");
+        mrvRegaloInit();
+      }
+    } catch (err) {
+      console.error("❌ Errore nel forzare i callback Klaro:", err);
+    }
   }
-});
+
+  // Intercetta click su "Accetta tutti"
+  document.addEventListener("click", e => {
+    if (e.target && e.target.textContent && e.target.textContent.includes("Accetta tutti")) {
+      console.log("🧩 Click su 'Accetta tutti' intercettato – applico callback forzati...");
+      setTimeout(forceCallbacksFromStorage, 1200);
+    }
+  });
+
+  // Intercetta anche salvataggio preferenze manuale
+  document.addEventListener("click", e => {
+    if (e.target && e.target.textContent && e.target.textContent.includes("Salva preferenze")) {
+      console.log("🧩 Click su 'Salva preferenze' intercettato – applico callback forzati...");
+      setTimeout(forceCallbacksFromStorage, 1200);
+    }
+  });
+})();
