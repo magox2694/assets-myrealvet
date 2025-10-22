@@ -166,3 +166,38 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }, 800);
 });
+// --- PATCH: Forza callback dopo "Accetta tutti" (Payhip fix) ---
+document.addEventListener("click", e => {
+  if (e.target && e.target.textContent.includes("Accetta tutti")) {
+    console.log("⚡ Forzo riattivazione callback dopo 'Accetta tutti' (Payhip sandbox)");
+    setTimeout(() => {
+      try {
+        const consents = klaro.getManager().consents;
+        if (consents["tawk"]) {
+          console.log("⚡ Forzo chat post-consenso");
+          const s = document.createElement("script");
+          s.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
+          s.async = true;
+          document.head.appendChild(s);
+        }
+        if (consents["mrvPopup"]) {
+          console.log("⚡ Forzo popup post-consenso");
+          if (typeof mrvRegaloInit === "function") mrvRegaloInit();
+        }
+        if (consents["google-analytics"]) {
+          console.log("⚡ Forzo analytics post-consenso");
+          const s = document.createElement("script");
+          s.src = "https://www.googletagmanager.com/gtag/js?id=G-74MREDQSG1";
+          s.async = true;
+          document.head.appendChild(s);
+          window.dataLayer = window.dataLayer || [];
+          function gtag() { dataLayer.push(arguments); }
+          gtag("js", new Date());
+          gtag("config", "G-74MREDQSG1");
+        }
+      } catch (err) {
+        console.warn("⚠️ Errore nel forzare i callback:", err);
+      }
+    }, 1000);
+  }
+});
