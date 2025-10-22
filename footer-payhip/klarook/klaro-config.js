@@ -2,20 +2,10 @@
 // Klaro config per Payhip – MyRealVet ©2025
 // Autore: Mihai Muhulica
 // Gestore: Dott.ssa Angelica Spaccini
-// Versione compatibile: Klaro v0.7.22
 // =====================================================
 
-// --- PATCH DI SICUREZZA PAYHIP ---
-(function () {
-  console.log("⚙️ Hook di sicurezza Klaro attivo");
-  if (window.klaro && typeof window.klaro.update !== "function") {
-    window.klaro.update = () => {
-      console.warn("⚠️ Klaro.update non disponibile – sandbox Payhip");
-    };
-  }
-})();
+console.log("⚙️ Hook di sicurezza Klaro attivo");
 
-// --- CONFIGURAZIONE PRINCIPALE ---
 var klaroConfig = {
   version: 1,
   elementID: "klaro",
@@ -57,19 +47,40 @@ var klaroConfig = {
     // =========================
     // ⚙️ COOKIE TECNICI PAYHIP
     // =========================
-    { name: "payhip", title: "Funzioni base del sito", purposes: ["necessary"], required: true, default: true },
-    { name: "stripe", title: "Stripe – Pagamenti", purposes: ["necessary"], required: true, default: true },
-    { name: "paypal", title: "PayPal – Pagamenti", purposes: ["necessary"], required: true, default: true },
+    {
+      name: "payhip",
+      title: "Funzioni base del sito (Payhip)",
+      purposes: ["necessary"],
+      required: true,
+      default: true
+    },
+    {
+      name: "stripe",
+      title: "Stripe – Pagamenti sicuri",
+      purposes: ["necessary"],
+      required: true,
+      default: true
+    },
+    {
+      name: "paypal",
+      title: "PayPal – Pagamenti sicuri",
+      purposes: ["necessary"],
+      required: true,
+      default: true
+    },
 
     // =========================
     // ⚙️ FUNZIONALI
     // =========================
     {
       name: "formspree",
-      title: "Formspree – Invio moduli",
+      title: "Formspree – Invio dei moduli di contatto",
       purposes: ["functional"],
       default: true,
-      callback: consent => console.log("Formspree:", consent)
+      cookies: [],
+      callback: function (consent) {
+        console.log("Formspree:", consent);
+      }
     },
     {
       name: "tawk",
@@ -77,15 +88,17 @@ var klaroConfig = {
       purposes: ["functional", "marketing"],
       default: false,
       cookies: [/^Tawk_/],
-      callback: consent => {
+      callback: function (consent) {
         if (consent) {
           console.log("✅ Chat Tawk.to attivata dopo consenso");
-          const s = document.createElement("script");
-          s.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
-          s.async = true;
-          s.charset = "UTF-8";
-          document.head.appendChild(s);
-        } else console.log("❌ Chat Tawk.to bloccata finché non accetta");
+          const s1 = document.createElement("script");
+          s1.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
+          s1.async = true;
+          s1.charset = "UTF-8";
+          document.head.appendChild(s1);
+        } else {
+          console.log("❌ Chat Tawk.to bloccata finché non accetta");
+        }
       }
     },
 
@@ -98,7 +111,7 @@ var klaroConfig = {
       purposes: ["analytics"],
       cookies: [/^_ga/, /^_gid/],
       default: false,
-      callback: consent => {
+      callback: function (consent) {
         if (consent) {
           console.log("✅ Analytics attivo dopo consenso");
           const s = document.createElement("script");
@@ -109,7 +122,9 @@ var klaroConfig = {
           function gtag() { dataLayer.push(arguments); }
           gtag("js", new Date());
           gtag("config", "G-74MREDQSG1");
-        } else console.log("❌ Analytics bloccato finché non accetta");
+        } else {
+          console.log("❌ Analytics bloccato finché non accetta");
+        }
       }
     },
 
@@ -118,7 +133,7 @@ var klaroConfig = {
     // =========================
     {
       name: "emailoctopus",
-      title: "EmailOctopus – Newsletter",
+      title: "EmailOctopus – Iscrizioni e newsletter",
       purposes: ["marketing"],
       default: false
     },
@@ -128,68 +143,47 @@ var klaroConfig = {
       purposes: ["marketing"],
       default: false,
       onlyOnce: true,
-      callback: consent => {
+      callback: function (consent) {
         if (consent) {
           console.log("✅ Popup MRV attivato dopo consenso");
           if (typeof mrvRegaloInit === "function") mrvRegaloInit();
-          else console.warn("⚠️ mrvRegaloInit non trovata");
-        } else console.log("❌ Popup MRV bloccato finché non accetta");
+        } else {
+          console.log("❌ Popup MRV bloccato finché non accetta");
+        }
       }
     }
   ]
 };
 
-// --- INIZIALIZZAZIONE SICURA ---
-document.addEventListener("DOMContentLoaded", () => {
-  setTimeout(() => {
-    if (typeof klaro !== "undefined") {
-      try {
-        klaro.setup(klaroConfig);
-        console.log("✅ Klaro avviato su Payhip");
-
-        // Listener globale: scatta ogni volta che l’utente salva o accetta
-        if (window.klaro && typeof klaro.on === "function") {
-          klaro.on("save", consents => {
-            console.log("💾 Consenso aggiornato:", consents);
-            if (consents["mrvPopup"] && typeof mrvRegaloInit === "function") mrvRegaloInit();
-            if (consents["tawk"]) {
-              const s = document.createElement("script");
-              s.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
-              s.async = true;
-              document.head.appendChild(s);
-            }
-          });
-        }
-      } catch (err) {
-        console.error("❌ Errore inizializzazione Klaro:", err);
-      }
-    } else {
-      console.warn("⚠️ Klaro non trovato dopo DOMContentLoaded");
-    }
-  }, 800);
-});
+// Inizializza Klaro
+console.log("✅ Klaro avviato su Payhip");
+klaro.setup(klaroConfig);
 
 // =====================================================
-// 🔧 FIX DEFINITIVO PAYHIP – forza consensi + callback
+// 🔧 FIX PAYHIP DEFINITIVO – gestisce "Accetta tutti" e "Salva preferenze"
 // =====================================================
 (function () {
-  function forceAllConsentsTrue() {
+  function applyConsentsRespectingUserChoice(forceAll = false) {
     try {
       const manager = klaro.getManager ? klaro.getManager() : null;
       if (!manager) return console.warn("⚠️ Nessun manager Klaro disponibile.");
 
-      // ✅ Forza tutti i servizi su TRUE
-      const names = Object.keys(manager.consents || {});
-      names.forEach(name => manager.updateConsent(name, true));
-      manager.saveAndApplyConsents();
+      if (forceAll) {
+        const names = Object.keys(manager.consents || {});
+        names.forEach(name => manager.updateConsent(name, true));
+        manager.saveAndApplyConsents();
+        console.log("✅ Tutti i consensi forzati su TRUE (sandbox Payhip)");
+      } else {
+        manager.saveAndApplyConsents();
+        console.log("💾 Consensi salvati rispettando la scelta utente");
+      }
 
-      console.log("✅ Tutti i consensi forzati su TRUE (sandbox Payhip)");
       const consents = manager.consents;
-      console.log("📦 Consensi effettivi dopo forzatura:", consents);
+      console.log("📦 Stato consensi:", consents);
 
-      // --- Esegui i callback manuali ---
+      // --- Esegui solo i servizi realmente consentiti ---
       if (consents["tawk"]) {
-        console.log("⚡ Forzo attivazione Tawk.to");
+        console.log("⚡ Attivo Tawk.to");
         const s1 = document.createElement("script");
         s1.src = "https://embed.tawk.to/68d5c3d5d8d13a194ecaa6d8/1j61g9vd4";
         s1.async = true;
@@ -198,7 +192,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (consents["google-analytics"]) {
-        console.log("⚡ Forzo attivazione Google Analytics");
+        console.log("⚡ Attivo Google Analytics");
         const s = document.createElement("script");
         s.src = "https://www.googletagmanager.com/gtag/js?id=G-74MREDQSG1";
         s.async = true;
@@ -210,27 +204,27 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       if (consents["mrvPopup"] && typeof mrvRegaloInit === "function") {
-        console.log("⚡ Forzo attivazione popup MRV");
+        console.log("⚡ Attivo popup MRV");
         mrvRegaloInit();
       }
     } catch (err) {
-      console.error("❌ Errore nel forzare consensi:", err);
+      console.error("❌ Errore nel gestire consensi:", err);
     }
   }
 
-  // Intercetta "Accetta tutti"
+  // 👉 “Accetta tutti” → forza TUTTI su TRUE
   document.addEventListener("click", e => {
     if (e.target && e.target.textContent && e.target.textContent.includes("Accetta tutti")) {
-      console.log("🧩 Click su 'Accetta tutti' intercettato – forzo tutti i consensi...");
-      setTimeout(forceAllConsentsTrue, 800);
+      console.log("🧩 Click su 'Accetta tutti' intercettato – forza tutti i consensi...");
+      setTimeout(() => applyConsentsRespectingUserChoice(true), 800);
     }
   });
 
-  // Intercetta anche "Salva preferenze"
+  // 👉 “Salva preferenze” → rispetta le scelte effettive
   document.addEventListener("click", e => {
     if (e.target && e.target.textContent && e.target.textContent.includes("Salva preferenze")) {
-      console.log("🧩 Click su 'Salva preferenze' intercettato – applico callback forzati...");
-      setTimeout(forceAllConsentsTrue, 800);
+      console.log("🧩 Click su 'Salva preferenze' intercettato – rispetto la scelta utente...");
+      setTimeout(() => applyConsentsRespectingUserChoice(false), 800);
     }
   });
 })();
