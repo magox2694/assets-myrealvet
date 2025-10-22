@@ -1,14 +1,27 @@
 // =====================================================
-// Klaro Config – MyRealVet ©2025
-// Autore tecnico: Mihai Muhulica
+// Klaro config per Payhip – MyRealVet ©2025
+// Autore: Mihai Muhulica
 // Gestore: Dott.ssa Angelica Spaccini
+// Versione compatibile: Klaro v0.7.22
 // =====================================================
 
+// --- PATCH DI SICUREZZA PAYHIP ---
+(function () {
+  console.log("⚙️ Hook di sicurezza Klaro attivo");
+  // Evita errori 'n.update is not a function' su Payhip
+  if (window.klaro && typeof window.klaro.update !== "function") {
+    window.klaro.update = () => {
+      console.warn("⚠️ Klaro.update non disponibile – sandbox Payhip");
+    };
+  }
+})();
+
+// --- CONFIGURAZIONE PRINCIPALE ---
 var klaroConfig = {
   version: 1,
   elementID: "klaro",
   styling: {
-    theme: ["light", "bottom", "wide"],
+    theme: ["light", "bottom", "wide"]
   },
   lang: "it",
   htmlTexts: true,
@@ -20,7 +33,7 @@ var klaroConfig = {
       consentModal: {
         title: "Gestisci le preferenze sui cookie",
         description:
-          "Usiamo cookie per garantire il corretto funzionamento del sito, analizzare il traffico e offrirti esperienze personalizzate. Puoi scegliere liberamente quali consentire.",
+          "Usiamo cookie per garantire il corretto funzionamento del sito, analizzare il traffico e offrirti esperienze personalizzate. Puoi scegliere liberamente quali consentire."
       },
       ok: "Accetta tutti",
       acceptAll: "Accetta tutti",
@@ -31,14 +44,14 @@ var klaroConfig = {
         necessary: "Necessari",
         functional: "Funzionali",
         analytics: "Statistiche",
-        marketing: "Marketing",
+        marketing: "Marketing"
       },
       service: {
         disableAll: {
-          description: "Attiva o disattiva tutte le categorie",
-        },
-      },
-    },
+          description: "Attiva o disattiva tutte le categorie"
+        }
+      }
+    }
   },
 
   services: [
@@ -50,21 +63,21 @@ var klaroConfig = {
       title: "Funzioni base del sito (Payhip)",
       purposes: ["necessary"],
       required: true,
-      default: true,
+      default: true
     },
     {
       name: "stripe",
       title: "Stripe – Pagamenti sicuri",
       purposes: ["necessary"],
       required: true,
-      default: true,
+      default: true
     },
     {
       name: "paypal",
       title: "PayPal – Pagamenti sicuri",
       purposes: ["necessary"],
       required: true,
-      default: true,
+      default: true
     },
 
     // =========================
@@ -72,13 +85,13 @@ var klaroConfig = {
     // =========================
     {
       name: "formspree",
-      title: "Formspree – Invio dei moduli di contatto",
+      title: "Formspree – Invio moduli di contatto",
       purposes: ["functional"],
       default: true,
       cookies: [],
       callback: function (consent) {
         console.log("Formspree:", consent);
-      },
+      }
     },
     {
       name: "tawk",
@@ -98,7 +111,7 @@ var klaroConfig = {
         } else {
           console.log("❌ Chat Tawk.to bloccata finché non accetta");
         }
-      },
+      }
     },
 
     // =========================
@@ -118,15 +131,13 @@ var klaroConfig = {
           s.src = "https://www.googletagmanager.com/gtag/js?id=G-74MREDQSG1";
           document.head.appendChild(s);
           window.dataLayer = window.dataLayer || [];
-          function gtag() {
-            dataLayer.push(arguments);
-          }
+          function gtag() { dataLayer.push(arguments); }
           gtag("js", new Date());
           gtag("config", "G-74MREDQSG1");
         } else {
           console.log("❌ Google Analytics bloccato finché non accetta");
         }
-      },
+      }
     },
 
     // =========================
@@ -136,7 +147,7 @@ var klaroConfig = {
       name: "emailoctopus",
       title: "EmailOctopus – Iscrizioni e newsletter",
       purposes: ["marketing"],
-      default: false,
+      default: false
     },
     {
       name: "mrvPopup",
@@ -146,78 +157,29 @@ var klaroConfig = {
       onlyOnce: true,
       callback: function (consent) {
         if (consent) {
-          console.log("✅ Popup MRV attivato dopo consenso Klaro");
+          console.log("✅ Popup MRV attivato dopo consenso");
           if (typeof mrvRegaloInit === "function") mrvRegaloInit();
+          else console.warn("⚠️ Funzione mrvRegaloInit non trovata");
         } else {
           console.log("❌ Popup MRV bloccato finché non accetta");
         }
-      },
-    },
-  ],
+      }
+    }
+  ]
 };
 
-// =============================
-// 🧩 Inizializzazione sicura
-// =============================
-(function initKlaroWhenReady() {
-  if (typeof klaro !== "undefined" && typeof klaro.setup === "function") {
-    klaro.setup(klaroConfig);
-    console.log("✅ Klaro avviato su Payhip");
-  } else {
-    console.log("⏳ In attesa di Klaro...");
-    setTimeout(initKlaroWhenReady, 100);
-  }
-})();
-// =============================
-// =====================================================
-// ✅ Fix finale Klaro su Payhip – hook diretto al Manager
-// =====================================================
-
-// Quando Klaro è pronto e inizializzato
-window.addEventListener("klaroInitialized", function () {
-  try {
-    const manager = klaro.getManager();
-    console.log("🎯 Hook attivo: Klaro Manager pronto");
-
-    // Osserva i cambi di consenso in tempo reale
-    manager.watch(function (consents, changed) {
-      console.log("📊 Cambi di consenso rilevati:", changed);
-
-      Object.entries(consents).forEach(([serviceName, isAllowed]) => {
-        const service = manager.config.services.find(s => s.name === serviceName);
-        if (service && typeof service.callback === "function") {
-          console.log(
-            `${isAllowed ? "✅" : "❌"} Callback live per ${serviceName}`
-          );
-          try {
-            service.callback(isAllowed, service);
-          } catch (err) {
-            console.warn(`⚠️ Errore callback per ${serviceName}:`, err);
-          }
-        }
-      });
-    });
-  } catch (err) {
-    console.error("❌ Hook Klaro non inizializzato:", err);
-  }
-});
-
-// Evento di sicurezza se Klaro non emette "klaroInitialized"
-setTimeout(() => {
-  if (typeof klaro !== "undefined" && klaro.getManager) {
-    const manager = klaro.getManager();
-    if (manager && !manager._watcherHooked) {
-      console.log("⚙️ Hook di sicurezza attivo per Klaro");
-      manager._watcherHooked = true;
-      manager.watch(function (consents, changed) {
-        console.log("📊 Cambi di consenso (fallback):", changed);
-        Object.entries(consents).forEach(([serviceName, isAllowed]) => {
-          const service = manager.config.services.find(s => s.name === serviceName);
-          if (service && typeof service.callback === "function") {
-            service.callback(isAllowed, service);
-          }
-        });
-      });
+// --- INIZIALIZZAZIONE POSTICIPATA PER PAYHIP ---
+document.addEventListener("DOMContentLoaded", () => {
+  setTimeout(() => {
+    if (typeof klaro !== "undefined") {
+      try {
+        klaro.setup(klaroConfig);
+        console.log("✅ Klaro avviato su Payhip");
+      } catch (err) {
+        console.error("❌ Errore inizializzazione Klaro:", err);
+      }
+    } else {
+      console.warn("⚠️ Klaro non trovato dopo DOMContentLoaded");
     }
-  }
-}, 2000);
+  }, 1000);
+});
