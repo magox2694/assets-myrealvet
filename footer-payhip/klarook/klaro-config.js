@@ -169,3 +169,27 @@ var klaroConfig = {
   }
 })();
 // =============================
+// =====================================================
+// 🧩 Fix Klaro su Payhip: riattiva callback su "Accetta tutti"
+// =====================================================
+document.addEventListener("click", function (e) {
+  const btn = e.target;
+  if (btn && (btn.classList.contains("klaro-accept-all") || btn.textContent.includes("Accetta tutti"))) {
+    console.log("⚡ Forzo riattivazione callback dopo 'Accetta tutti'");
+    setTimeout(() => {
+      if (typeof klaro !== "undefined" && klaro.getManager) {
+        const manager = klaro.getManager();
+        // Esegui i callback per tutti i servizi consentiti
+        manager.config.services.forEach((service) => {
+          if (manager.confirmed && manager.confirmed[service.name]) {
+            const consent = manager.confirmed[service.name];
+            if (consent && typeof service.callback === "function") {
+              console.log(`🔁 Richiamo callback per: ${service.name}`);
+              service.callback(true, service);
+            }
+          }
+        });
+      }
+    }, 500);
+  }
+});
